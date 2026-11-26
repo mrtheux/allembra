@@ -2,6 +2,7 @@ name: APK de teste Android
 on:
   push:
     branches: [main]
+    tags: ['v*']
   workflow_dispatch:
 
 permissions:
@@ -12,6 +13,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
@@ -50,3 +53,20 @@ jobs:
           name: Allembra-teste
           path: build/preview/Allembra-teste.apk
           if-no-files-found: error
+
+  release:
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: apk
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v5
+        with:
+          name: Allembra-teste
+      - name: Anexar APK à prévia no GitHub
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ github.ref_name }}
+        run: |
+          gh release create "$TAG" Allembra-teste.apk --repo "$GITHUB_REPOSITORY"             --verify-tag --prerelease --title "Allembra $TAG · Teste Android"             --notes "Prévia para Android 9 ou superior. Baixe Allembra-teste.apk em Assets. O login e o backup dependem da configuração do Appwrite."
