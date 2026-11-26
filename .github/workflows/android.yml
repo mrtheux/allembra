@@ -1,0 +1,41 @@
+name: APK de teste Android
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  apk:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - name: Instalar Android SDK 35
+        run: sdkmanager 'platforms;android-35' 'build-tools;35.0.0'
+      - name: Compilar e verificar assinatura
+        env:
+          APPWRITE_ENDPOINT: ${{ vars.APPWRITE_ENDPOINT }}
+          APPWRITE_PROJECT_ID: ${{ vars.APPWRITE_PROJECT_ID }}
+          APPWRITE_BUCKET_ID: ${{ vars.APPWRITE_BUCKET_ID }}
+          APPWRITE_RECOVERY_URL: ${{ vars.APPWRITE_RECOVERY_URL }}
+          APPWRITE_VERIFICATION_URL: ${{ vars.APPWRITE_VERIFICATION_URL }}
+        run: |
+          {
+            printf 'endpoint=%s\n' "$APPWRITE_ENDPOINT"
+            printf 'projectId=%s\n' "$APPWRITE_PROJECT_ID"
+            printf 'bucketId=%s\n' "$APPWRITE_BUCKET_ID"
+            printf 'recoveryUrl=%s\n' "$APPWRITE_RECOVERY_URL"
+            printf 'verificationUrl=%s\n' "$APPWRITE_VERIFICATION_URL"
+          } > app/src/main/assets/appwrite.properties
+          ./build-apk.sh
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Allembra-teste
+          path: build/preview/Allembra-teste.apk
+          if-no-files-found: error
