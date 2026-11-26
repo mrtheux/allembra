@@ -14,8 +14,8 @@ if [[ "${1:-}" == "--design-preview" ]]; then
     build="$PWD/build/design-preview"
     source_dir="design-preview/src/main"
     package="br.appdaqui.designpreview"
-    version_code=1
-    version_name=0.4.0-preview
+    version_code=2
+    version_name=0.4.1-preview
 fi
 mkdir -p "$build/java" "$build/classes" "$build/dex"
 rm -f "$build/unsigned.apk" "$build/aligned.apk" "$build/Allembra-teste.apk"

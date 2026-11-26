@@ -55,7 +55,7 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: Allembra-teste
-          path: build/*/Allembra-teste.apk
+          path: ${{ endsWith(github.ref_name, '-preview') && 'build/design-preview/Allembra-teste.apk' || 'build/preview/Allembra-teste.apk' }}
           if-no-files-found: error
 
   release:
