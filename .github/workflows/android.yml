@@ -40,6 +40,10 @@ jobs:
           APPWRITE_RECOVERY_URL: ${{ vars.APPWRITE_RECOVERY_URL }}
           APPWRITE_VERIFICATION_URL: ${{ vars.APPWRITE_VERIFICATION_URL }}
         run: |
+          if [[ "$GITHUB_REF_NAME" == *-preview ]]; then
+            ./build-apk.sh --design-preview
+            exit 0
+          fi
           {
             printf 'endpoint=%s\n' "$APPWRITE_ENDPOINT"
             printf 'projectId=%s\n' "$APPWRITE_PROJECT_ID"
@@ -51,7 +55,7 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: Allembra-teste
-          path: build/preview/Allembra-teste.apk
+          path: build/*/Allembra-teste.apk
           if-no-files-found: error
 
   release:
@@ -69,4 +73,8 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           TAG: ${{ github.ref_name }}
         run: |
+          if [[ "$TAG" == *-preview ]]; then
+            gh release create "$TAG" Allembra-teste.apk --repo "$GITHUB_REPOSITORY" --verify-tag --prerelease --title "Allembra · Prévia de design" --notes "Prévia visual para Android 9 ou superior. Instale ao lado do Allembra anterior. Este APK usa o ícone Vermelho laca. Os registros e ajustes de teste ficam na sessão."
+            exit 0
+          fi
           gh release create "$TAG" Allembra-teste.apk --repo "$GITHUB_REPOSITORY"             --verify-tag --prerelease --title "Allembra $TAG · Teste Android"             --notes "Prévia para Android 9 ou superior. Baixe Allembra-teste.apk em Assets. O login e o backup dependem da configuração do Appwrite."
