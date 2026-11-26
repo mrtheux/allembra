@@ -41,7 +41,10 @@ jobs:
           APPWRITE_VERIFICATION_URL: ${{ vars.APPWRITE_VERIFICATION_URL }}
         run: |
           if [[ "$GITHUB_REF_NAME" == *-preview ]]; then
-            ./build-apk.sh --design-preview
+            curl --fail --silent --show-error --location --retry 3 https://dl.google.com/android/repository/platform-36_r02.zip -o "$RUNNER_TEMP/platform-36.zip"
+            echo "37607369a28c5b640b3a7998868d45898ebcb777565a0e85f9acf36f29631d2e  $RUNNER_TEMP/platform-36.zip" | sha256sum --check
+            unzip -q "$RUNNER_TEMP/platform-36.zip" -d "$RUNNER_TEMP/platform-36"
+            DAQUI_PLATFORM="$RUNNER_TEMP/platform-36/android-36/android.jar" ./build-apk.sh --design-preview
             exit 0
           fi
           {
@@ -74,7 +77,7 @@ jobs:
           TAG: ${{ github.ref_name }}
         run: |
           if [[ "$TAG" == *-preview ]]; then
-            gh release create "$TAG" Allembra-teste.apk --repo "$GITHUB_REPOSITORY" --verify-tag --prerelease --title "Allembra · Prévia de design" --notes "Prévia visual para Android 9 ou superior. Instale ao lado do Allembra anterior. Este APK usa o ícone Vermelho laca. Os registros e ajustes de teste ficam na sessão."
+            gh release create "$TAG" Allembra-teste.apk --repo "$GITHUB_REPOSITORY" --verify-tag --prerelease --title "Allembra · Prévia de design" --notes "APK de teste para Android 9 ou superior, instalado ao lado das versões anteriores. Ícone Vermelho laca. Registros em cofre local criptografado. Teste câmera, microfone, selagem e recuperação antes de usar com memórias importantes."
             exit 0
           fi
           gh release create "$TAG" Allembra-teste.apk --repo "$GITHUB_REPOSITORY"             --verify-tag --prerelease --title "Allembra $TAG · Teste Android"             --notes "Prévia para Android 9 ou superior. Baixe Allembra-teste.apk em Assets. O login e o backup dependem da configuração do Appwrite."

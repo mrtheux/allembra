@@ -1,11 +1,17 @@
 package br.appdaqui.designpreview;
 
 import android.Manifest;
+import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Insets;
+import android.graphics.Color;
+import android.view.WindowManager;
+import android.view.autofill.AutofillManager;
+import android.webkit.JavascriptInterface;
+import org.json.JSONObject;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -29,6 +35,13 @@ public final class DesignActivity extends Activity {
     private static final String HOST = "allembra-preview.invalid";
     private static final String HOME = "https://" + HOST + "/index.html";
     private static final int MEDIA_PERMISSION = 31;
+    private static final int NOTIFICATION_PERMISSION = 32, SAVE_DOCUMENT = 41, OPEN_DOCUMENT = 42;
+    private FrameLayout container;
+    private VaultFiles vault;
+    private String restoration;
+    private volatile boolean documentOpen;
+    private ValueAnimator surfaceAnimation;
+    private int currentSurface = BLUE;
     private static final int BLUE = 0xFF005A85;
     private WebView web;
     private PermissionRequest pending;
@@ -37,7 +50,9 @@ public final class DesignActivity extends Activity {
         super.onCreate(state);
         getWindow().setStatusBarColor(BLUE);
         getWindow().setNavigationBarColor(BLUE);
-        FrameLayout container = new FrameLayout(this);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);
+        vault = new VaultFiles(this);
+        container = new FrameLayout(this);
         container.setBackgroundColor(BLUE);
         if (Build.VERSION.SDK_INT >= 35) {
             container.setOnApplyWindowInsetsListener((view, insets) -> {
@@ -51,8 +66,10 @@ public final class DesignActivity extends Activity {
         web.setBackgroundColor(BLUE);
         WebSettings settings = web.getSettings();
         settings.setJavaScriptEnabled(true);
+        settings.setMediaPlaybackRequiresUserGesture(false);
         settings.setAllowFileAccess(false);
         settings.setAllowContentAccess(false);
+        web.addJavascriptInterface(dataBridge, "AllembraNative");
         settings.setMixedContentMode(WebSettings.MIXED_CONTENT_NEVER_ALLOW);
         web.setWebViewClient(new WebViewClient() {
             @Override public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
@@ -72,11 +89,13 @@ public final class DesignActivity extends Activity {
                 String filename = uri.getLastPathSegment();
                 String type;
                 if ("index.html".equals(filename)) type = "text/html";
-                else if ("lucide.min.js".equals(filename)) type = "application/javascript";
+                else if ("lucide.min.js".equals(filename) || "vault.js".equals(filename)) type = "application/javascript";
+                else if ("cogita.svg".equals(filename)) type = "image/svg+xml";
+                else if ("mark.png".equals(filename)) type = "image/png";
                 else if ("inter.ttf".equals(filename) || "newsreader.ttf".equals(filename)) type = "font/ttf";
                 else return notFound();
                 try {
-                    return new WebResourceResponse(type, type.equals("font/ttf") ? null : "UTF-8", getAssets().open(filename));
+                    return new WebResourceResponse(type, type.startsWith("font/") || type.equals("image/png") ? null : "UTF-8", getAssets().open(filename));
                 } catch (IOException missing) { return notFound(); }
             }
         });
@@ -89,6 +108,8 @@ public final class DesignActivity extends Activity {
         container.addView(web, new FrameLayout.LayoutParams(-1, -1));
         setContentView(container);
         web.loadUrl(HOME);
+        if (Build.VERSION.SDK_INT >= 33)
+            getOnBackInvokedDispatcher().registerOnBackInvokedCallback(0, this::goBack);
     }
 
     private static boolean isLocal(Uri uri) {
@@ -141,9 +162,139 @@ public final class DesignActivity extends Activity {
         else request.deny();
     }
 
-    @Override public void onBackPressed() {
+    private final class VaultBridge {
+        @JavascriptInterface public void surface(String css) {
+            if (css == null || !css.matches("#[a-fA-F0-9]{6}")) return;
+            int color = Color.parseColor(css);
+            runOnUiThread(() -> {
+                if (surfaceAnimation != null) surfaceAnimation.cancel();
+                if (currentSurface == color) return;
+                surfaceAnimation = ValueAnimator.ofArgb(currentSurface, color);
+                surfaceAnimation.setDuration(320);
+                surfaceAnimation.addUpdateListener(animation -> {
+                    currentSurface = (int) animation.getAnimatedValue();
+                    container.setBackgroundColor(currentSurface);
+                    web.setBackgroundColor(currentSurface);
+                    getWindow().setStatusBarColor(currentSurface);
+                    getWindow().setNavigationBarColor(currentSurface);
+                });
+                surfaceAnimation.start();
+            });
+        }
+
+        @JavascriptInterface public String readVault() {
+            try { return vault.read(); } catch (IOException failure) { return "!erro-de-leitura"; }
+        }
+
+        @JavascriptInterface public boolean writeVault(String cipherText) {
+            try { vault.write(cipherText); return true; }
+            catch (IOException failure) { return false; }
+        }
+
+        @JavascriptInterface public void chooseBackup() {
+            runOnUiThread(() -> pickDocument(Intent.ACTION_CREATE_DOCUMENT, SAVE_DOCUMENT));
+        }
+
+        @JavascriptInterface public void chooseRestore() {
+            runOnUiThread(() -> pickDocument(Intent.ACTION_OPEN_DOCUMENT, OPEN_DOCUMENT));
+        }
+
+        @JavascriptInterface public synchronized String takeRestore() {
+            String value = restoration;
+            restoration = null;
+            return value;
+        }
+
+        synchronized void setRestore(String value) { restoration = value; }
+
+        @JavascriptInterface public void configure(String frequency, boolean reminders, int hours) {
+            if (!("off".equals(frequency) || "daily".equals(frequency) || "weekly".equals(frequency))
+                    || hours < 1 || hours > 168) return;
+            runOnUiThread(() -> {
+                PreviewJobs.configure(DesignActivity.this, frequency, reminders, hours);
+                if (reminders && Build.VERSION.SDK_INT >= 33
+                        && checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED)
+                    requestPermissions(new String[]{Manifest.permission.POST_NOTIFICATIONS}, NOTIFICATION_PERMISSION);
+            });
+        }
+
+        @JavascriptInterface public void offerAutofill() {
+            runOnUiThread(() -> {
+                AutofillManager manager = getSystemService(AutofillManager.class);
+                if (manager != null && manager.isEnabled()) manager.commit();
+                else backupStatus("Ative um gerenciador em Configurações do Android para salvar a frase nele.");
+            });
+        }
+    }
+
+    private final VaultBridge dataBridge = new VaultBridge();
+
+    private void pickDocument(String action, int code) {
+        if (documentOpen) return;
+        Intent intent = new Intent(action).addCategory(Intent.CATEGORY_OPENABLE)
+            .setType(code == SAVE_DOCUMENT ? "application/json" : "*/*");
+        if (code == SAVE_DOCUMENT) intent.putExtra(Intent.EXTRA_TITLE, "Allembra-Backup.json");
+        try {
+            documentOpen = true;
+            startActivityForResult(intent, code);
+        } catch (ActivityNotFoundException missing) {
+            documentOpen = false;
+            backupStatus("O seletor de documentos está indisponível.");
+        }
+    }
+
+    @Override protected void onActivityResult(int code, int result, Intent data) {
+        super.onActivityResult(code, result, data);
+        if (code != SAVE_DOCUMENT && code != OPEN_DOCUMENT) return;
+        documentOpen = false;
+        if (result != RESULT_OK || data == null || data.getData() == null) return;
+        Uri uri = data.getData();
+        if (!"content".equals(uri.getScheme())) return;
+        if (code == OPEN_DOCUMENT) {
+            new Thread(() -> {
+                try {
+                    dataBridge.setRestore(vault.importBackup(uri));
+                    runOnUiThread(() -> {
+                        if (!isDestroyed()) web.evaluateJavascript("window.allembraRestoreReady()", null);
+                    });
+                } catch (Exception failure) { backupStatus("Não foi possível ler o backup selecionado."); }
+            }, "allembra-import").start();
+            return;
+        }
+        new Thread(() -> {
+            try {
+                vault.exportBackup(uri);
+                boolean granted = false;
+                try {
+                    getContentResolver().takePersistableUriPermission(uri, Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+                    granted = true;
+                } catch (SecurityException ignored) {}
+                if (granted) {
+                    android.content.SharedPreferences prefs = PreviewJobs.prefs(this);
+                    String previous = prefs.getString("destination", null);
+                    prefs.edit().putString("destination", uri.toString()).apply();
+                    if (previous != null && !previous.equals(uri.toString())) {
+                        try { getContentResolver().releasePersistableUriPermission(Uri.parse(previous), Intent.FLAG_GRANT_WRITE_URI_PERMISSION); }
+                        catch (SecurityException ignored) {}
+                    }
+                    PreviewJobs.configure(this, prefs.getString("frequency", "off"), prefs.getBoolean("reminders", false), prefs.getInt("hours", 24));
+                }
+                backupStatus(granted ? "Backup criptografado salvo." : "Cópia salva. O provedor não autorizou atualização automática.");
+            } catch (Exception failure) { backupStatus("Não foi possível gravar no destino selecionado."); }
+        }, "allembra-export").start();
+    }
+
+    private void backupStatus(String message) {
+        runOnUiThread(() -> {
+            if (!isDestroyed()) web.evaluateJavascript("window.allembraBackupStatus(" + JSONObject.quote(message) + ")", null);
+        });
+    }
+
+    @Override public void onBackPressed() { goBack(); }
+
+    private void goBack() {
         web.evaluateJavascript("window.allembraBack && window.allembraBack()", handled -> {
-            if (!"true".equals(handled)) super.onBackPressed();
+            if (!"true".equals(handled)) finish();
         });
     }
 
@@ -162,6 +313,7 @@ public final class DesignActivity extends Activity {
 
     @Override protected void onDestroy() {
         if (pending != null) { pending.deny(); pending = null; }
+        if (surfaceAnimation != null) surfaceAnimation.cancel();
         if (web != null) web.destroy();
         super.onDestroy();
     }
