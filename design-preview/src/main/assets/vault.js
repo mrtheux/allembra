@@ -19,8 +19,8 @@
     return crypto.subtle.deriveKey({name:'PBKDF2',hash:'SHA-256',salt:sourceSalt,iterations:rounds},phraseKey,
       {name:'AES-GCM',length:256},false,['encrypt','decrypt']);
   }
-  function descriptor(iv) {
-    return {name:'AES-GCM',iv,additionalData:encoder.encode('Allembra backup v1'),tagLength:128};
+  function descriptor(iv, purpose="Allembra backup v1") {
+    return {name:'AES-GCM',iv,additionalData:encoder.encode(purpose),tagLength:128};
   }
   function parseEnvelope(raw) {
     if(typeof raw!=='string'||raw.length>maxBackup)throw new Error('O arquivo excede o limite de restauração.');
@@ -95,19 +95,24 @@
     dialog.className='ae-vault';
     dialog.setAttribute('aria-label','Cofre criptografado');
     const settingUp=mode==='setup';
+    const hasBio=mode==='unlock'&&bridge.biometricEnabled?.();
+    const keyFile=mode==='key';
     dialog.innerHTML=`<form>
-      <h2>${settingUp?'Sua chave de memória':mode==='restore'?'Recuperar backup':'Desbloquear Allembra'}</h2>
-      <p>${settingUp?'Crie uma frase de pelo menos 16 caracteres. Guarde-a no gerenciador de senhas ou em lugar seguro. Ela é necessária para recuperar o seu backup.':mode==='restore'?'Use a frase que protegeu este arquivo. Recuperar substitui o cofre atual.':'Use a frase escolhida no primeiro acesso.'}</p>
+      <h2>${settingUp?'Sua chave de memória':mode==='restore'?'Recuperar backup':keyFile?'Recuperar sua frase':'Desbloquear Allembra'}</h2>
+      <p>${settingUp?'Crie uma frase de pelo menos 16 caracteres. Guarde-a no gerenciador de senhas ou em lugar seguro. Ela é necessária para recuperar o seu backup.':mode==='restore'?'Use a frase que protegeu este arquivo. Recuperar substitui o cofre atual.':keyFile?'Use a senha de emergência com que você cifrou este arquivo.':'Use a frase escolhida no primeiro acesso.'}</p>
       <input type="text" name="user" value="Allembra" autocomplete="username" readonly hidden>
-      <label>Frase de recuperação<input type="password" name="vault-password" autocomplete="${settingUp?'new-password':'current-password'}" required maxlength="512"></label>
-      ${settingUp?'<label>Repita a frase<input type="password" name="confirmation" autocomplete="new-password" required maxlength="512"></label><label><input type="checkbox" name="autofill"> Oferecer a frase ao gerenciador de senhas do Android</label>':''}
+      <label>Frase de recuperação<input type="password" name="vault-password" autocomplete="${settingUp?'new-password':'current-password'}" required maxlength="512"></label><button type="button" class="ae-eye" data-eye>Mostrar frase</button>
+      ${settingUp?'<label>Repita a frase<input type="password" name="confirmation" autocomplete="new-password" required maxlength="512"></label>':''}
       ${mode==='restore'?'<label><input type="checkbox" name="replace" required> Confirmo a substituição do cofre</label>':''}
       <p role="alert"></p>
-      <button class="ae-primary" type="submit">${settingUp?'Criar meu cofre':mode==='restore'?'Recuperar':'Desbloquear'}</button>
-      ${mode==='restore'?'<button type="button" data-gate-cancel>Cancelar</button>':'<button type="button" data-gate-restore>Já tenho um backup</button>'}
+      <button class="ae-primary" type="submit">${settingUp?'Criar meu cofre':mode==='restore'||keyFile?'Recuperar':'Desbloquear'}</button>
+      ${hasBio?'<button type="button" data-gate-bio>Usar biometria</button>':''}
+      ${mode==='restore'||keyFile?'<button type="button" data-gate-cancel>Cancelar</button>':'<button type="button" data-gate-restore>Já tenho um backup</button>'}
     </form>`;
     document.querySelector('.ae-phone').append(dialog);
-    dialog.addEventListener('cancel',event=>{event.preventDefault();if(!busy&&mode==='restore')exit();});
+    installEye(dialog);
+    dialog.querySelector('[data-gate-bio]')?.addEventListener('click',()=>bridge.biometricOpen());
+    dialog.addEventListener('cancel',event=>{event.preventDefault();if(!busy&&(mode==='restore'||keyFile))exit();});
     dialog.querySelector('[data-gate-restore]')?.addEventListener('click',()=>bridge.chooseRestore());
     dialog.querySelector('[data-gate-cancel]')?.addEventListener('click',()=>{if(!busy)exit();});
     function exit(){
@@ -130,10 +135,18 @@
         if(settingUp){
           salt=crypto.getRandomValues(new Uint8Array(16));key=await derive(phrase,salt);
           await save(current);
-          if(form.elements.autofill.checked){
-            bridge.offerAutofill();
-            await new Promise(resolve=>setTimeout(resolve,100));
-          }
+        } else if(keyFile) {
+          const {sourceSalt,iv,cipher}=parseEnvelope(raw);
+          const rescue=await derive(phrase,sourceSalt);
+          const recovered=decoder.decode(await crypto.subtle.decrypt(descriptor(iv,'Allembra recovery key v1'),rescue,cipher));
+          if(recovered.length<16||recovered.length>512)throw new Error();
+          exit();
+          if(!document.querySelector('.ae-vault'))gate(lockedEnvelope?'unlock':'setup',lockedEnvelope);
+          const destination=document.querySelector('.ae-vault form');
+          destination.elements['vault-password'].value=recovered;
+          if(destination.elements.confirmation)destination.elements.confirmation.value=recovered;
+          destination.querySelector('[role=alert]').textContent='Frase recuperada. Confira ou continue.';
+          return;
         } else {
           const {sourceSalt,iv,cipher}=parseEnvelope(raw);
           const candidate=await derive(phrase,sourceSalt);
@@ -142,7 +155,7 @@
           if(mode==='restore'&&!bridge.writeVault(raw))throw new Error('Não foi possível escrever o cofre restaurado.');
           key=candidate;salt=sourceSalt;
           Object.assign(current,{drafts:data.drafts,capsules:data.capsules,entries:data.entries},data.options);
-          if(mode==='restore')bridge.configure(current.backup,current.notifications,current.hours);
+          if(mode==='restore'){lockedEnvelope=raw;bridge.biometricClear?.();bridge.configure(current.backup,current.notifications,current.hours);}
         }
         form.reset();dialog.close();dialog.remove();hooks.render();
         if(mode==='restore')hooks.present('Backup recuperado.');
@@ -155,9 +168,81 @@
   }
   globalThis.allembraRestoreReady=()=>{
     const raw=bridge.takeRestore();
-    if(raw)gate('restore',raw);
+    if(raw){
+      try { if(JSON.parse(raw).purpose==='recovery-key'){gate('key',raw);return;} } catch {}
+      gate('restore',raw);
+    }
     else hooks.present('Não foi possível ler o arquivo.');
   };
+  function installEye(dialog){
+    const toggle=dialog.querySelector('[data-eye]');
+    toggle?.addEventListener('click',()=>{
+      const inputs=[...dialog.querySelectorAll('input[data-showable],input[name="vault-password"],input[name=confirmation]')];
+      const reveal=inputs[0]?.type==='password';
+      inputs.forEach(input=>input.type=reveal?'text':'password');
+      toggle.textContent=reveal?'Ocultar frase':'Mostrar frase';
+      toggle.setAttribute('aria-pressed',String(!!reveal));
+    });
+  }
+  globalThis.allembraBiometricPhrase=phrase=>{
+    const form=document.querySelector('.ae-vault form');
+    if(!form||busy)return;
+    form.elements['vault-password'].value=phrase;
+    form.requestSubmit();
+  };
+  globalThis.allembraBiometricSaved=()=>{
+    document.querySelector('.ae-security')?.close();
+    hooks?.present('Biometria ativada para este aparelho.');
+  };
+  globalThis.allembraSecurityMessage=message=>{
+    const target=document.querySelector('.ae-security[open] [role=alert],.ae-vault[open] [role=alert]');
+    if(target)target.textContent=message;
+    else hooks?.present(message);
+  };
+  function securitySettings(mode){
+    const dialog=document.createElement('dialog');
+    dialog.className='ae-vault ae-security';
+    const email=mode==='email';
+    dialog.innerHTML=`<form><h2>${email?'Chave por e-mail':'Biometria'}</h2>
+      <p>${email?'A frase será cifrada com uma senha de emergência diferente. Guarde essa senha em outro lugar. O e-mail abrirá para você revisar antes de enviar.':'Confirme sua frase e use a impressão digital deste aparelho para ativar o desbloqueio.'}</p>
+      <label>Frase atual<input name="phrase" type="password" data-showable required maxlength="512"></label>
+      ${email?'<label>E-mail de destino<input name="email" type="email" required maxlength="250"></label><label>Senha de emergência<input name="emergency" type="password" data-showable required maxlength="512"></label><label>Repita a senha de emergência<input name="emergency-confirm" type="password" data-showable required maxlength="512"></label>':''}
+      <button type="button" class="ae-eye" data-eye>Mostrar frase</button><p role="alert"></p>
+      <button class="ae-primary" type="submit">${email?'Preparar e-mail':'Ativar biometria'}</button>
+      ${!email&&bridge.biometricEnabled?.()?'<button type="button" data-bio-remove>Remover biometria</button>':''}
+      <button type="button" data-security-cancel>Cancelar</button></form>`;
+    document.querySelector('.ae-phone').append(dialog);
+    dialog.addEventListener('close',()=>dialog.remove());
+    dialog.querySelector('[data-security-cancel]').onclick=()=>dialog.close();
+    dialog.querySelector('[data-bio-remove]')?.addEventListener('click',()=>{bridge.biometricClear();dialog.close();hooks?.present('Biometria removida.');});
+    installEye(dialog);
+    dialog.querySelector('form').addEventListener('submit',async event=>{
+      event.preventDefault();
+      if(busy)return;
+      const form=event.target, alert=form.querySelector('[role=alert]');
+      const phrase=form.elements.phrase.value;
+      const secret=email?form.elements.emergency.value:'';
+      if(email&&(secret.trim().length<16||secret!==form.elements['emergency-confirm'].value||secret===phrase)){
+        alert.textContent='Crie uma senha de emergência diferente, com pelo menos 16 caracteres, e repita-a.';return;
+      }
+      busy=true;
+      try {
+        const envelope=parseEnvelope(bridge.readVault());
+        const verified=await derive(phrase,envelope.sourceSalt);
+        await crypto.subtle.decrypt(descriptor(envelope.iv),verified,envelope.cipher);
+        if(email){
+          const sourceSalt=crypto.getRandomValues(new Uint8Array(16)),iv=crypto.getRandomValues(new Uint8Array(12));
+          const recovery=await derive(secret,sourceSalt);
+          const payload=await crypto.subtle.encrypt(descriptor(iv,'Allembra recovery key v1'),recovery,encoder.encode(phrase));
+          bridge.draftRecoveryEmail(form.elements.email.value,JSON.stringify({version:1,purpose:'recovery-key',rounds,salt:encode(sourceSalt),iv:encode(iv),payload:encode(new Uint8Array(payload))}));
+          dialog.close();
+        } else bridge.biometricSave(phrase);
+        form.reset();
+      } catch {alert.textContent='Frase incorreta ou cofre indisponível.';}
+      finally{busy=false;}
+    });
+    dialog.showModal();
+  }
   globalThis.allembraBackupStatus=message=>hooks?.present(message);
   globalThis.AllembraStore={
     start(state,callbacks){
@@ -165,6 +250,6 @@
       lockedEnvelope=bridge.readVault();
       gate(lockedEnvelope?'unlock':'setup',lockedEnvelope);
     },
-    save
+    save,settings:securitySettings
   };
 })();

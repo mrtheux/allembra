@@ -25,3 +25,13 @@ O pacote `br.appdaqui.designreview` instala ao lado das prévias anteriores. O �
 - Antes de subir à loja, defina o ID definitivo, mantenha código de versão monotônico, use uma chave de upload própria e configure Play App Signing na conta do Instituto Cogita. O AAB de rascunho está sem assinatura de produção.
 - Complete a página da loja, capturas, política de privacidade, formulário de segurança de dados e faixa de teste. Valide tela inicial, 120 Hz, acessibilidade, estado offline, permissões recusadas, processos encerrados, backup restaurado e mudança de relógio.
 - Referência de API alvo: [Google Play](https://developer.android.com/google/play/requirements/target-sdk).
+
+## Testes da revisão 0.6
+
+A revisão tem ID de instalação separado para preservar o Allembra Teste 0.5. Para migrar um cofre de teste, exporte no 0.5 e recupere o arquivo no 0.6 com a mesma frase. Em **Ajustes → Backup**, **Fazer backup no Google Drive** abre o seletor do Android. Se Drive não aparecer, salve em arquivo local e use **Enviar uma cópia criptografada** ou envie pelo app do Drive.
+
+Foto e vídeo são capturados pelo app de câmera do Android. O Allembra solicita limite de 30 segundos e valida a mídia recebida. A interface durante a captura, inclusive o contador, é controlada pelo app de câmera. O áudio separado usa o gravador nativo. Os limites provisórios ainda se aplicam.
+
+A configuração de biometria exige a frase e autenticação forte do dispositivo. A frase de emergência por e-mail fica cifrada com uma senha independente. O app abre o painel de compartilhamento para revisão, com o destino preenchido quando o cliente aceita essa informação.
+
+A ficha, o inventário de dados e o rascunho de política estão em [Preparação para a Play Store](../docs/play-store-pt-br.md).

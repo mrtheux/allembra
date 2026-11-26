@@ -13,9 +13,9 @@ target_sdk=35
 if [[ "${1:-}" == "--design-preview" ]]; then
     build="$PWD/build/design-preview"
     source_dir="design-preview/src/main"
-    package="br.appdaqui.designreview"
+    package="br.appdaqui.designreview.r2"
     version_code=1
-    version_name=0.5.0-preview
+    version_name=0.6.0-preview
     target_sdk=36
 fi
 platform="${DAQUI_PLATFORM:-$sdk/platforms/android-$target_sdk/android.jar}"

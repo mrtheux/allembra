@@ -70,7 +70,7 @@ public final class PreviewJobs extends JobService {
         PendingIntent open = PendingIntent.getActivity(this, 0, new Intent(this, DesignActivity.class),
             PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
         Notification notification = new Notification.Builder(this, channel)
-            .setSmallIcon(br.appdaqui.designreview.R.drawable.icon_notification).setColor(0xFF005A85).setContentTitle("Guarde o agora.")
+            .setSmallIcon(br.appdaqui.designreview.r2.R.drawable.icon_notification).setColor(0xFF005A85).setContentTitle("Guarde o agora.")
             .setContentText("Há um momento de hoje que você quer reencontrar?")
             .setAutoCancel(true).setContentIntent(open).build();
         manager.notify(REMINDER, notification);

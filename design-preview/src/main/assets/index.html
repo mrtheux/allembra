@@ -25,11 +25,15 @@
     <dialog class="ae-notice" aria-labelledby="ae-notice-title">
       <div class="ae-notice-content">
         <div class="ae-notice-masthead"><span class="ae-mark" aria-hidden="true"><b></b><i></i><em></em></span><strong>Allembra</strong></div>
-        <h2 id="ae-notice-title">Está na hora de lembrar.</h2>
-        <p>Uma manhã sem pressa</p>
+        <span class="ae-small">Cápsula disponível</span>
+        <h2 id="ae-notice-title">Uma manhã<br>sem pressa.</h2>
+        <p>Uma lembrança sua está pronta para abrir.</p>
       </div>
       <div class="ae-actions"><button type="button" data-action="dismiss">Depois</button><button type="button" data-action="open" class="ae-primary">Abrir carta</button></div>
     </dialog>
+    <dialog class="ae-share-format" aria-label="Formato do print"><h3>Formato do print</h3><div class="ae-actions">
+      <button type="button" data-action="print-post">1:2</button><button type="button" data-action="print-story" class="ae-primary">Stories · 9:16</button></div>
+      <button type="button" data-action="print-close">Cancelar</button></dialog>
     <dialog class="ae-month" aria-labelledby="ae-month-title"><div class="ae-month-content"></div></dialog>
   </article>
 </div>
@@ -154,7 +158,7 @@
 #allembra-editorial .ae-grid button[data-kind="0"]{--kind:#ffcf51}
 #allembra-editorial .ae-grid button[data-kind="1"]{--kind:#96f3ff}
 #allembra-editorial .ae-grid button[data-kind="2"]{--kind:#ff9b92}
-#allembra-editorial .ae-grid button[data-kind="3"]{--kind:#ffe89c}
+#allembra-editorial .ae-grid button[data-kind="3"]{--kind:#d6c3ff}
 #allembra-editorial .ae-grid strong{font:600 clamp(29px,9vw,43px)/.94 Newsreader,Georgia,serif}
 
 #allembra-editorial .ae-media-icon{display:grid;place-items:center}
@@ -289,12 +293,44 @@ html,body{margin:0;min-height:100%;background:#005a85}
 #allembra-editorial .ae-vault [role=alert]:empty{display:none}
 #allembra-editorial .ae-vault [role=alert]{color:#8b241f}
 #allembra-editorial .ae-save-menu + .ae-status{z-index:5}
+#allembra-editorial .ae-page:before{left:max(-42.67%,-173px);right:auto;width:min(128%,520px);background-position:center;background-size:contain;opacity:.018}
+#allembra-editorial .ae-wavebox canvas{left:72px;width:calc(100% - 72px)}
+#allembra-editorial .ae-stage{touch-action:pan-y}
+#allembra-editorial .ae-day[aria-expanded=true]{background:#fcf0d0;color:#292319;border-color:#fcf0d0;border-radius:25px 25px 12px 12px}
+#allembra-editorial .ae-day-detail{position:relative;margin-top:-5px;transform-origin:var(--ae-join-x,50%) top}
+#allembra-editorial .ae-day-detail:before{content:"";position:absolute;top:calc(-1 * var(--ae-join-h));height:var(--ae-join-h);left:calc(var(--ae-join-x) - 12px);width:24px;background:#fcf0d0;border-radius:8px 8px 0 0}
+#allembra-editorial .ae-day-detail h3{font-size:clamp(14px,5.25vw,25px);white-space:nowrap;letter-spacing:-.045em}
+#allembra-editorial .ae-notice{--paper:#fff9e9;background:#005a85;color:var(--paper);border-radius:19px}
+#allembra-editorial .ae-notice-content{color:inherit}
+#allembra-editorial .ae-notice-content .ae-mark b{background:#fff4de}
+#allembra-editorial .ae-notice-content .ae-mark i{background:#7bcedd}
+#allembra-editorial .ae-notice-content .ae-mark em{background:#ffc453}
+#allembra-editorial .ae-notice h2{border:0;padding-top:2px}
+#allembra-editorial .ae-notice .ae-actions .ae-primary{background:#ffbb23;color:#18242a;text-decoration:none}
+#allembra-editorial .ae-notice .ae-actions button{color:inherit}
+#allembra-editorial .ae-share-actions{display:flex;gap:7px;justify-content:flex-end}
+#allembra-editorial .ae-share-actions button{background:#fff9e9;color:#123748}
+#allembra-editorial .ae-year-button{font-weight:700;text-decoration:underline;text-underline-offset:3px}
+#allembra-editorial .ae-backup-help{font-size:12px}
+#allembra-editorial .ae-backup-actions [data-action=backup-target]{padding:7px 12px}
+html,body{width:100%;max-width:100%;overflow-x:hidden}
+#allembra-editorial,#allembra-editorial .ae-phone,#allembra-editorial .ae-stage{min-width:0;width:100%;max-width:100%;box-sizing:border-box}
+#allembra-editorial .ae-save-menu{position:fixed;inset:auto 0 max(12px,env(safe-area-inset-bottom)) 0;margin:0 auto;width:min(calc(100% - 24px),390px);max-width:100%;max-height:min(76dvh,540px);box-sizing:border-box;padding:14px;border:0}
+#allembra-editorial .ae-save-menu::backdrop,#allembra-editorial .ae-share-format::backdrop{background:#07243285}
+#allembra-editorial .ae-save-menu video,#allembra-editorial .ae-save-menu audio,#allembra-editorial .ae-save-menu img{width:100%;min-width:0;max-height:190px}
+#allembra-editorial .ae-save-options button{min-width:0;padding:7px 4px}
+#allembra-editorial .ae-share-format{width:min(calc(100% - 24px),360px);box-sizing:border-box;padding:17px;border:0;border-radius:16px;background:#fff9e9;color:#092d3c}
+#allembra-editorial .ae-share-format .ae-actions{margin:14px 0 5px}
+#allembra-editorial .ae-letter{grid-template-rows:auto auto 1fr auto}
+#allembra-editorial .ae-letter-signature{text-align:right;align-self:end;font:600 19px Newsreader,Georgia,serif}
+#allembra-editorial .ae-eye{justify-self:end;text-decoration:underline;text-underline-offset:3px}
+#allembra-editorial .ae-security input[type=email]{width:100%;min-height:44px;padding:7px}
 </style>
 <script>
 (() => {
   const root = document.getElementById('allembra-editorial');
   const q = selector => root.querySelector(selector);
-  const phone = q('.ae-phone'), page = q('.ae-page'), notice = q('.ae-notice'), calendar=q('.ae-month');
+  const phone = q('.ae-phone'), page = q('.ae-page'), notice = q('.ae-notice'), calendar=q('.ae-month'), shareFormat=q('.ae-share-format');
   const vintage = (kind, faded=false) => `<span class="ae-glyph ae-vintage ae-vintage-${kind}${faded?' ae-faded':''}" aria-hidden="true"><b></b></span>`;
   const icons = name => name==='camera' ? vintage('photo') : name==='video' ? vintage('video') :
     `<i data-lucide="${name}" aria-hidden="true"></i>`;
@@ -373,21 +409,45 @@ html,body{margin:0;min-height:100%;background:#005a85}
     if(entry.kind===1)return `<img src="${url}" alt="Foto registrada">`;
     return entry.kind===2?`<video src="${url}" controls playsinline></video>`:`<audio src="${url}" controls></audio>`;
   }
+  let dayAnimation;
   function showDay(){
     const fold=q('.ae-day-detail');
+    const dayButtons=[...page.querySelectorAll('[data-day]')];
+    const markSelected=()=>dayButtons.forEach(b=>b.setAttribute('aria-expanded',String(b.dataset.day===state.day)));
+    if(state.day)markSelected();
+    dayAnimation?.cancel();
+    if(!state.day){
+      if(fold.hidden)return;
+      const hide=()=>{if(!state.day){markSelected();fold.hidden=true;fold.innerHTML='';releaseReview();}};
+      if(!reduce()&&fold.animate){
+        dayAnimation=fold.animate([{opacity:1,transform:'none',borderRadius:'16px'},
+          {opacity:.5,transform:'scale(.84,.54)',borderRadius:'30px'},
+          {opacity:0,transform:'scale(.15,.12)',borderRadius:'45px'}],
+          {duration:285,easing:'cubic-bezier(.44,.05,.62,1)',fill:'forwards'});
+        dayAnimation.finished.then(hide,()=>{});
+      }else hide();
+      return;
+    }
     releaseReview();
-    const dayButtons=page.querySelectorAll('[data-day]');
-    dayButtons.forEach(b=>b.setAttribute('aria-expanded',String(b.dataset.day===state.day)));
-    if(!state.day){fold.hidden=true;return;}
+    const chosen=dayButtons.find(b=>b.dataset.day===state.day);
+    if(!chosen){fold.hidden=true;return;}
     const entries=entriesOn(state.day);
     fold.innerHTML=`<h3>${formatDay.format(parseDay(state.day))}</h3>`+
       (entries.length?entries.map(entry=>`<section><strong>${types[entry.kind][0]}</strong>${entry.closed?'<p>Pré-selado · conteúdo oculto.</p>':preview(entry)}</section>`).join(''):'<p>Nenhum registro aberto para revisar.</p>')+
       (entries.length?button('seal-flow','Escolher quando relembrar','ae-primary'):'');
     fold.hidden=false;
-    if(!reduce()&&fold.animate)fold.animate([{opacity:0,transform:'scale(.96,.68)',clipPath:'inset(0 0 65% 0 round 32px)'},
-      {opacity:1,transform:'scale(1.015,.99)',clipPath:'inset(0 round 21px)'},{transform:'none',clipPath:'inset(0 round 16px)'}],
-      {duration:345,easing:'cubic-bezier(.2,.7,.3,1)'});
+    const anchor=chosen.getBoundingClientRect(), detail=fold.getBoundingClientRect(), relative=anchor.left+anchor.width/2-detail.left;
+    const longest=Math.max(...dayButtons.map(day=>day.offsetHeight));
+    fold.style.setProperty('--ae-join-x',relative+'px');
+    fold.style.setProperty('--ae-join-h',Math.max(7,longest-chosen.offsetHeight+6)+'px');
+    if(!reduce()&&fold.animate)dayAnimation=fold.animate([
+      {opacity:0,transform:'scale(.15,.12)',borderRadius:'45px'},
+      {opacity:1,transform:'scale(1.025,.86)',borderRadius:'24px',offset:.72},
+      {transform:'none',borderRadius:'16px'}],{duration:345,easing:'cubic-bezier(.2,.7,.3,1)'});
     showIcons();
+  }
+  function collapseDay(){
+    if(state.page==='week'&&state.day){state.day=null;showDay();}
   }
   function shiftWeek(direction){
     state.weekOffset=Math.min(0,state.weekOffset+direction);state.day=null;render();
@@ -407,9 +467,16 @@ html,body{margin:0;min-height:100%;background:#005a85}
       const key=dateOf(date), has=state.entries.has(key);
       return `<button type="button" data-calendar-day="${key}" aria-label="${formatDay.format(date)}${has?', tem registros':''}">${i+1}${has?'<i aria-hidden="true"></i>':''}</button>`;
     }).join('');
-    q('.ae-month-content').innerHTML=`<div class="ae-actions">${backButton('month-prev')}<h3 id="ae-month-title">${formatMonth.format(month)}</h3>${button('month-next','›')}</div>
-      <div class="ae-month-grid"><span>Seg</span><span>Ter</span><span>Qua</span><span>Qui</span><span>Sex</span><span>Sáb</span><span>Dom</span>${'<span></span>'.repeat(first)}${days}</div>${button('month-close','Fechar')}`;
+    q('.ae-month-content').innerHTML=`<div class="ae-actions">${backButton('month-prev')}<h3 id="ae-month-title">${formatMonth.format(month).split(' de ')[0]}</h3>${button('month-next','›')}</div>
+      <div class="ae-month-grid"><span>Seg</span><span>Ter</span><span>Qua</span><span>Qui</span><span>Sex</span><span>Sáb</span><span>Dom</span>${'<span></span>'.repeat(first)}${days}</div>
+      <div class="ae-actions">${button('month-close','Fechar')}${button('month-year',String(month.getUTCFullYear()),'ae-year-button')}</div>`;
     showIcons();
+  }
+  function chooseYear(){
+    const year=state.month.getUTCFullYear();
+    q('.ae-month-content').innerHTML=`<h3 id="ae-month-title">Escolher ano</h3>
+      <form class="ae-year-form"><label class="ae-label">Ano<input type="number" min="1900" max="2100" required value="${year}"></label>
+      <div class="ae-actions">${button('month-back','Voltar')}<button type="submit" class="ae-primary">Aplicar</button></div></form>`;
   }
   const drop=q('.ae-nav-drop');
   let dropPosition, dropAnimation;
@@ -435,6 +502,9 @@ html,body{margin:0;min-height:100%;background:#005a85}
     ],{duration:505,easing:'cubic-bezier(.3,.05,.35,1)'});
   }
   function render() {
+    const review=q('.ae-save-menu');
+    if(review?.open)review.close();
+    review?.remove();
     releaseReview();
     phone.dataset.full = String(state.page === 'capture');
     phone.dataset.scene = state.page==='capture' ? ['thought','camera','camera','audio'][state.kind] : state.page;
@@ -487,7 +557,7 @@ html,body{margin:0;min-height:100%;background:#005a85}
     if(state.page==='week') {
       page.innerHTML=`<h2>Cápsulas</h2><div class="ae-actions ae-week-tools">
         <button type="button" data-action="week-prev" aria-label="Semana anterior">‹</button>
-        <button type="button" data-action="calendar" aria-label="Selecionar dia no calendário"><span class="ae-small">Sua semana · Brasília</span></button>
+        <button type="button" data-action="calendar" aria-label="Selecionar dia no calendário"><span class="ae-small">Sua semana</span></button>
         <button type="button" data-action="week-next" aria-label="Próxima semana"${state.weekOffset===0?' disabled':''}>›</button>
         </div><div class="ae-week" aria-label="Registros desta semana">${week()}</div>
         <div class="ae-day-detail" hidden></div>
@@ -499,7 +569,9 @@ html,body{margin:0;min-height:100%;background:#005a85}
       ${backButton('week')}
       <h2>Relicário</h2>
       <div class="ae-letter"><span class="ae-small">${state.opened?'Cápsula':'Carta de exemplo'}</span><h3>${state.opened?'De mim, para mim.':'Uma manhã sem pressa.'}</h3>
-      ${state.folded?(state.opened?state.opened.items.filter(entry=>entry.openAt<=Date.now()).map(preview).join(''):'<blockquote>“O melhor do meu dia foi tomar café sem pressa. Espero que você ainda encontre tempo para isso.”</blockquote>'):button('unfold','Desdobrar carta','ae-primary')}</div>`;
+      ${state.folded?(state.opened?state.opened.items.filter(entry=>entry.openAt<=Date.now()).map(preview).join(''):'<blockquote>“O melhor do meu dia foi tomar café sem pressa. Espero que você ainda encontre tempo para isso.”</blockquote>'):button('unfold','Desdobrar carta','ae-primary')}
+      ${!state.opened?'<footer class="ae-letter-signature">Allembra</footer>':''}</div>
+      ${state.folded?`<div class="ae-share-actions">${button('share','Compartilhar')}${button('share-print','Compartilhar print')}</div>`:''}`;
     if(state.page==='settings') {
       page.innerHTML=`<h2>Ajustes</h2>
        <section class="ae-preferences" aria-labelledby="ae-reminders-title">
@@ -520,7 +592,12 @@ html,body{margin:0;min-height:100%;background:#005a85}
        <section class="ae-preferences" aria-labelledby="ae-backup-title">
          <h3 id="ae-backup-title">Backup</h3>
          <label class="ae-pref-line">Frequência<select class="ae-pref-select" data-field="backup"><option value="off">Manual</option><option value="daily">Diária</option><option value="weekly">Semanal</option></select></label>
-         <div class="ae-backup-actions">${button('backup-target','Escolher local ou Drive')}${button('backup-restore','Recuperar backup')}</div>
+         <div class="ae-backup-actions">${button('backup-target','Fazer backup no Google Drive','ae-primary')}${button('backup-local','Salvar em arquivo local')}${button('backup-share','Enviar uma cópia criptografada')}${button('backup-restore','Recuperar backup')}</div>
+         <p class="ae-backup-help">Para o Drive, escolha Google Drive no menu de locais do Android.</p>
+       </section>
+       <section class="ae-preferences" aria-labelledby="ae-access-title">
+         <h3 id="ae-access-title">Segurança</h3>
+         <div class="ae-backup-actions">${button('biometric-enable','Configurar biometria')}${button('recovery-email','Backup da chave por e-mail')}</div>
        </section>
        ${button('settings-save','Salvar ajustes','ae-primary ae-pref-save')}
        <p class="ae-status" role="status"></p>
@@ -547,6 +624,7 @@ html,body{margin:0;min-height:100%;background:#005a85}
       if(outgoing)await outgoing.finished.catch(()=>{});
       state.page=destination;
       render();
+      if(window.scrollY)window.scrollTo(0,0);
       outgoing?.cancel();
       animatePage(flip);
     } finally { moving=false; }
@@ -573,6 +651,11 @@ html,body{margin:0;min-height:100%;background:#005a85}
     }
     context.setTransform(ratio,0,0,ratio,0,0);
     context.clearRect(0,0,width,height);
+    if(running&&nativeAudio&&time-lastLevelAt>32){
+      lastLevelAt=time;
+      const value=Math.max(0,Math.min(1,Number(globalThis.AllembraNative.micLevel())/32768));
+      levels.push(Math.sqrt(value));if(levels.length>42)levels.shift();
+    }
     const input=analyser?new Uint8Array(analyser.fftSize):null;
     if(input) analyser.getByteTimeDomainData(input);
     for(let layer=0;layer<4;layer++) {
@@ -580,7 +663,8 @@ html,body{margin:0;min-height:100%;background:#005a85}
       const phase=running&&!reduce()?time/970:0;
       for(let x=0;x<=width;x+=4) {
         const fraction=x/width;
-        const signal=input?(input[Math.min(input.length-1,Math.floor(fraction*input.length))]-128)/128:
+        const envelope=nativeAudio?levels[Math.floor(fraction*Math.max(0,levels.length-1))]||0:0;
+        const signal=nativeAudio?Math.sin(fraction*23+phase*4)*envelope*.6:input?(input[Math.min(input.length-1,Math.floor(fraction*input.length))]-128)/128:
           running?Math.sin(fraction*18+phase*3)*Math.sin(fraction*Math.PI)**2*.2:0;
         const y=height*.50+(layer-1.5)*12+Math.sin(fraction*7+layer*.7+phase)*7+signal*height*.45;
         if(x===0) context.moveTo(x,y); else context.lineTo(x,y);
@@ -591,7 +675,34 @@ html,body{margin:0;min-height:100%;background:#005a85}
     }
     if(running && audioActive && !reduce()) drawId=requestAnimationFrame(next=>wave(next,true));
   }
-  let keepAudio=false,audioReviewWaiting=false,audioSettling=false;
+  let keepAudio=false,audioReviewWaiting=false,audioSettling=false,nativeAudio=false;
+  let levels=[],lastLevelAt=0;
+  globalThis.allembraMicStarted=()=>{
+    if(state.kind!==3||state.page!=='capture'){globalThis.AllembraNative?.micCancel();return;}
+    audioActive=true;nativeAudio=true;levels=[];
+    q('.ae-audio-label').textContent='Gravando · toque para parar';
+    wave(nowTime(),true);
+  };
+  globalThis.allembraMicFailed=message=>{
+    audioActive=false; nativeAudio=false;audioSettling=false;audioReviewWaiting=false;
+    if(state.kind!==3||state.page!=='capture')return;
+    q('.ae-mic').setAttribute('aria-pressed','false');
+    q('.ae-mic').setAttribute('aria-label','Iniciar gravação');
+    q('.ae-audio-label').textContent=message;
+    wave(nowTime(),false);
+  };
+  globalThis.allembraMicFinished=()=>{
+    if(state.kind!==3||state.page!=='capture')return;
+    const base64=globalThis.AllembraNative?.micTake();
+    if(!base64){globalThis.allembraMicFailed('Gravação curta ou indisponível. Tente novamente.');return;}
+    const data=Uint8Array.from(atob(base64),char=>char.charCodeAt(0));
+    state.media=new Blob([data],{type:'audio/mp4'});
+    audioActive=false;nativeAudio=false;audioSettling=false;cancelAnimationFrame(drawId);
+    q('.ae-mic').setAttribute('aria-pressed','false');
+    q('.ae-mic').setAttribute('aria-label','Iniciar gravação');
+    q('.ae-audio-label').textContent='Áudio pronto para salvar';
+    if(audioReviewWaiting){audioReviewWaiting=false;showSaveChoices();}
+  };
   let savingRecord=false;
   async function startAudio() {
     keepAudio=false;state.media=false;
@@ -600,6 +711,9 @@ html,body{margin:0;min-height:100%;background:#005a85}
     q('.ae-mic').setAttribute('aria-pressed','true');
     q('.ae-mic').setAttribute('aria-label','Parar gravação');
     q('.ae-audio-label').textContent='Aguardando microfone…';
+    if(globalThis.AllembraNative?.micStart){
+      nativeAudio=true;AllembraNative.micStart();return;
+    }
     try {
       const Audio=window.AudioContext||window.webkitAudioContext;
       if(!Audio||!navigator.mediaDevices?.getUserMedia||!window.MediaRecorder) throw Error('Microfone indisponível');
@@ -640,6 +754,12 @@ html,body{margin:0;min-height:100%;background:#005a85}
     wave(nowTime(),true);
   }
   function stopAudio(leaving=false) {
+    if(nativeAudio){
+      cancelAnimationFrame(drawId);audioActive=false;
+      if(leaving){nativeAudio=false;audioSettling=false;globalThis.AllembraNative.micCancel();}
+      else{audioSettling=true;globalThis.AllembraNative.micStop();}
+      return;
+    }
     requestId++;
     const wasRecording=recorder?.state==='recording';
     keepAudio=!leaving;
@@ -657,12 +777,29 @@ html,body{margin:0;min-height:100%;background:#005a85}
       wave(nowTime(),false);
     }
   }
+  globalThis.allembraCameraFailed=message=>{
+    cameraPending=false;
+    if(state.page==='capture'&&cameraType(state.kind))q('.ae-status').textContent=message;
+  };
+  globalThis.allembraCameraReady=type=>{
+    cameraPending=false;
+    const encoded=globalThis.AllembraNative?.cameraTake();
+    if(state.page!=='capture'||!cameraType(state.kind)||!encoded)return;
+    state.media=new Blob([Uint8Array.from(atob(encoded),char=>char.charCodeAt(0))],{type});
+    q('.ae-status').textContent='Captura pronta para salvar.';
+    showSaveChoices();
+  };
   async function startCamera() {
     const current=++cameraVersion;
     const viewer=q('.ae-camera-view video');
     const status=q('.ae-camera .ae-status');
     cameraPending=true;
     status.textContent='Abrindo câmera…';
+    if(globalThis.AllembraNative?.cameraStart){
+      status.textContent='Abrindo câmera do Android…';
+      AllembraNative.cameraStart(state.kind===2);
+      return;
+    }
     try {
       if(!navigator.mediaDevices?.getUserMedia) throw Error();
       const input=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:'environment'},width:{ideal:1920},height:{ideal:1080}},audio:state.kind===2});
@@ -695,6 +832,7 @@ html,body{margin:0;min-height:100%;background:#005a85}
     const status=q('.ae-camera .ae-status');
     const version=cameraVersion;
     if(state.media){showSaveChoices();return;}
+    if(globalThis.AllembraNative?.cameraStart){startCamera();return;}
     if(!cameraStream){
       if(globalThis.AllembraNative){status.textContent='Câmera indisponível. Confira a permissão e abra novamente.';return;}
       state.media=true;showSaveChoices();return;
@@ -802,7 +940,8 @@ html,body{margin:0;min-height:100%;background:#005a85}
     return textType(state.kind)?q('textarea').value.trim():state.media;
   }
   function showSaveChoices(){
-    if(q('.ae-save-menu'))return;
+    if(q('.ae-save-menu[open]'))return;
+    if(audioActive&&nativeAudio){audioReviewWaiting=true;stopAudio();return;}
     if(audioActive&&!simulated){
       if(recorder?.state!=='recording'){q('.ae-status').textContent='Aguarde a autorização do microfone.';return;}
       audioReviewWaiting=true;stopAudio();return;
@@ -813,12 +952,21 @@ html,body{margin:0;min-height:100%;background:#005a85}
     if(!content){q('.ae-status').textContent='Adicione um registro antes de salvar.';return;}
     const feather=q('.ae-feather');
     feather.setAttribute('aria-expanded','true');
-    const menu=document.createElement('section');
+    const menu=document.createElement('dialog');
     menu.className='ae-save-menu';
     menu.setAttribute('aria-label','O que fazer com este registro');
     menu.innerHTML=preview({kind:state.kind,content})+
       `<div class="ae-save-options">${button('keep','Gravar')}${button('preseal','Selar','ae-primary')}${button('discard','Descartar')}</div>`;
-    page.append(menu);
+    phone.append(menu);
+    menu.addEventListener('close',()=>{
+      feather.setAttribute('aria-expanded','false');menu.remove();releaseReview();
+    });
+    menu.addEventListener('click', event=>{
+      if(event.target!==menu)return;
+      const b=menu.getBoundingClientRect();
+      if(event.clientX<b.left||event.clientX>b.right||event.clientY<b.top||event.clientY>b.bottom)menu.close();
+    });
+    menu.showModal();
     const source=feather.getBoundingClientRect(), target=menu.getBoundingClientRect();
     menu.style.transformOrigin=(source.left+source.width/2-target.left)+'px '+(source.top+source.height/2-target.top)+'px';
     if(!reduce()&&menu.animate)menu.animate([
@@ -871,7 +1019,10 @@ html,body{margin:0;min-height:100%;background:#005a85}
   });
   root.addEventListener('click',event=>{
     const control=event.target.closest('button');
-    if(!control || moving || savingRecord) return;
+    if(!control || moving || savingRecord) {
+      if(state.page==='week'&&!event.target.closest('.ae-day-detail,.ae-week,dialog'))collapseDay();
+      return;
+    }
     if(control.dataset.action==='save' && suppressClick){suppressClick=false;return;}
     if(control.dataset.page){go(control.dataset.page);return;}
     if(control.dataset.day){
@@ -909,6 +1060,13 @@ html,body{margin:0;min-height:100%;background:#005a85}
       case 'month-prev':state.month.setUTCMonth(state.month.getUTCMonth()-1);renderMonth();break;
       case 'month-next':state.month.setUTCMonth(state.month.getUTCMonth()+1);renderMonth();break;
       case 'month-close':calendar.close();break;
+      case 'month-year':chooseYear();break;
+      case 'month-back':renderMonth();break;
+      case 'share':shareLetter(false);break;
+      case 'share-print':shareFormat.showModal();break;
+      case 'print-post':shareFormat.close();shareLetter(true,false);break;
+      case 'print-story':shareFormat.close();shareLetter(true,true);break;
+      case 'print-close':shareFormat.close();break;
       case 'mic':if(audioSettling)break;if(audioActive)stopAudio();else startAudio();break;
       case 'seal-flow':if(state.page==='home')state.day=dateKey();go('seal');break;
       case 'seal': {
@@ -927,7 +1085,11 @@ html,body{margin:0;min-height:100%;background:#005a85}
         persist().then(ok=>{savingRecord=false;if(ok){playEffect('lock');go('week');}else{state.capsules.pop();state.drafts=prior;}});
         break;
       }
-      case 'backup-target':if(globalThis.AllembraNative)AllembraNative.chooseBackup();break;
+      case 'backup-target':
+      case 'backup-local':if(globalThis.AllembraNative)AllembraNative.chooseBackup();break;
+      case 'biometric-enable':globalThis.AllembraStore?.settings('biometric');break;
+      case 'recovery-email':globalThis.AllembraStore?.settings('email');break;
+      case 'backup-share':globalThis.AllembraNative?.shareBackup();break;
       case 'backup-restore':if(globalThis.AllembraNative)AllembraNative.chooseRestore();break;
       case 'settings-save':{
         const hours=q('[data-field=hours]');
@@ -944,6 +1106,64 @@ html,body{margin:0;min-height:100%;background:#005a85}
         });
         break;
       }
+    }
+  });
+  function shareLetter(print,story=false){
+    if(state.page!=='letter'||!state.folded||!globalThis.AllembraNative)return;
+    const letter=q('.ae-letter');
+    if(print){
+      const bounds=letter.getBoundingClientRect();
+      const scale=window.devicePixelRatio||1;
+      AllembraNative.sharePrint(Math.round(bounds.left*scale),Math.round(bounds.top*scale),
+        Math.round(bounds.width*scale),Math.round(bounds.height*scale),Math.round(window.scrollY*scale),story);
+      return;
+    }
+    const texts=state.opened?state.opened.items.filter(entry=>entry.kind===0&&entry.openAt<=Date.now()).map(entry=>entry.content):
+      [letter.querySelector('blockquote')?.textContent||''];
+    if(texts.some(Boolean))AllembraNative.shareText(texts.join('\n\n'));
+    else {
+      const media=state.opened?.items.find(item=>item.openAt<=Date.now()&&item.content instanceof Blob)?.content;
+      if(media&&AllembraNative.shareMedia)shareMedia(media);
+      else shareFormat.showModal();
+    }
+  }
+  async function shareMedia(blob){
+    const bytes=new Uint8Array(await blob.arrayBuffer()),parts=[];
+    for(let i=0;i<bytes.length;i+=8192)parts.push(String.fromCharCode(...bytes.subarray(i,i+8192)));
+    AllembraNative.shareMedia(blob.type.split(';')[0],btoa(parts.join('')));
+  }
+  root.addEventListener('submit',event=>{
+    if(!event.target.matches('.ae-year-form'))return;
+    event.preventDefault();
+    const input=event.target.querySelector('input');
+    if(input.reportValidity()){state.month.setUTCFullYear(Number(input.value));renderMonth();}
+  });
+  let screenSwipe, lastCenterTap;
+  root.addEventListener('pointerdown',event=>{
+    if(!event.isPrimary||!['home','week','settings'].includes(state.page)||
+      !event.target.closest('.ae-stage')||event.target.closest('.ae-week,.ae-day-detail,button,input,select,textarea,dialog'))return;
+    screenSwipe={id:event.pointerId,x:event.clientX,y:event.clientY};
+  });
+  root.addEventListener('pointerup',event=>{
+    if(screenSwipe?.id!==event.pointerId)return;
+    const x=event.clientX-screenSwipe.x,y=event.clientY-screenSwipe.y;
+    screenSwipe=undefined;
+    if(Math.abs(x)<16&&Math.abs(y)<16&&state.page==='week'&&event.pointerType==='touch'){
+      const now=performance.now();
+      if(lastCenterTap&&now-lastCenterTap.time<340&&Math.hypot(event.clientX-lastCenterTap.x,event.clientY-lastCenterTap.y)<35){
+        lastCenterTap=null;state.weekOffset=0;state.day=null;render();
+      }else lastCenterTap={time:now,x:event.clientX,y:event.clientY};
+      return;
+    }
+    if(Math.abs(x)<45||Math.abs(x)<Math.abs(y)*1.4)return;
+    const tabs=['week','home','settings'];
+    const target=tabs[tabs.indexOf(state.page)+(x<0?1:-1)];
+    if(target)go(target);
+  });
+  root.addEventListener('pointercancel',()=>{screenSwipe=undefined;});
+  page.addEventListener('dblclick',event=>{
+    if(state.page==='week'&&!event.target.closest('button,select,input,.ae-day-detail')){
+      state.weekOffset=0;state.day=null;render();
     }
   });
   let weekGesture, skipDayClick=false;
@@ -978,6 +1198,8 @@ html,body{margin:0;min-height:100%;background:#005a85}
     });
   }
   window.allembraBack=()=>{
+    if(shareFormat.open){shareFormat.close();return true;}
+    const review=q('.ae-save-menu[open]');if(review){review.close();return true;}
     if(calendar.open){calendar.close();return true;}
     if(notice.open){notice.close();return true;}
     const gate=q('.ae-vault[open]');
