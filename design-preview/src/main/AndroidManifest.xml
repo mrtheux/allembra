@@ -1,4 +1,4 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="br.appdaqui.designreview.r2">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="br.appdaqui.designreview.r3">
     <uses-permission android:name="android.permission.CAMERA"/>
     <uses-permission android:name="android.permission.USE_BIOMETRIC"/>
     <uses-permission android:name="android.permission.RECORD_AUDIO"/>
@@ -6,7 +6,7 @@
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
     <uses-feature android:name="android.hardware.camera" android:required="false"/>
     <uses-feature android:name="android.hardware.microphone" android:required="false"/>
-    <application android:label="Allembra Teste 0.6" android:icon="@drawable/icon_lacquer"
+    <application android:label="Allembra Teste 0.7" android:icon="@drawable/icon_lacquer"
         android:allowBackup="false" android:usesCleartextTraffic="false"
         android:theme="@android:style/Theme.Material.Light.NoActionBar">
         <activity android:name="br.appdaqui.designpreview.DesignActivity" android:exported="true" android:windowSoftInputMode="adjustResize" android:configChanges="orientation|screenSize|keyboardHidden">
@@ -15,7 +15,7 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <provider android:name="br.appdaqui.designpreview.ShareFiles" android:authorities="br.appdaqui.designreview.r2.share"
+        <provider android:name="br.appdaqui.designpreview.ShareFiles" android:authorities="br.appdaqui.designreview.r3.share"
             android:exported="false" android:grantUriPermissions="true"/>
         <service android:name="br.appdaqui.designpreview.PreviewJobs" android:permission="android.permission.BIND_JOB_SERVICE" android:exported="true"/>
     </application>

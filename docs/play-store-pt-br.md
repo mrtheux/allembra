@@ -57,3 +57,7 @@ O texto acima é um rascunho. Confirme contato, retenção, práticas do binári
 6. Decida a política de liberação. Esta versão usa o relógio do aparelho para abrir cápsulas. Uma promessa de retenção resistente a alteração do relógio exige serviço de tempo e controle da chave fora do dispositivo.
 
 O PDF *Google Security Overview* de outubro de 2026 é referência para defesa em camadas, criptografia, acesso e resposta a incidentes. Ele descreve os controles do Google Cloud. A publicação do Allembra exige as declarações e verificações acima, com base no comportamento próprio do app.
+
+### Assinatura no Google Play
+
+O certificado público da assinatura do app e o da chave de upload têm funções diferentes. O Play App Signing usa a chave de assinatura do app para distribuir atualizações. Para enviar o AAB, assine com a chave de upload registrada para o mesmo ID de pacote. Confirme na seção **Integridade do app** o ID definitivo e as impressões digitais SHA-256 antes do primeiro envio. Guarde a chave privada e a senha em armazenamento seguro, fora do repositório. [Play App Signing](https://support.google.com/googleplay/android-developer/answer/9842756)

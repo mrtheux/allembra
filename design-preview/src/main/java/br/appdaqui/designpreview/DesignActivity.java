@@ -3,13 +3,13 @@ package br.appdaqui.designpreview;
 import android.Manifest;
 import android.animation.ValueAnimator;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.content.ClipData;
 import android.content.pm.PackageManager;
 import android.graphics.Insets;
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.view.WindowManager;
 import android.view.autofill.AutofillManager;
@@ -32,6 +32,7 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.FrameLayout;
+import android.widget.NumberPicker;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -323,6 +324,33 @@ public final class DesignActivity extends Activity {
             }
         }
         @JavascriptInterface public void micStart() { runOnUiThread(DesignActivity.this::requestNativeMic); }
+        @JavascriptInterface public void micPause(boolean pause) {
+            runOnUiThread(() -> {
+                if (microphone.setPaused(pause)) callWeb("allembraMicPaused", String.valueOf(pause));
+                else callWeb("allembraSecurityMessage", "Não foi possível alterar a gravação.");
+            });
+        }
+        @JavascriptInterface public void chooseYear(int current) {
+            if (current < 1900 || current > 2100) return;
+            runOnUiThread(() -> {
+                NumberPicker picker = new NumberPicker(DesignActivity.this);
+                picker.setMinValue(1900);
+                picker.setMaxValue(2100);
+                picker.setValue(current);
+                picker.setWrapSelectorWheel(false);
+                picker.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
+                FrameLayout body = new FrameLayout(DesignActivity.this);
+                FrameLayout.LayoutParams placement = new FrameLayout.LayoutParams(-2, -2, android.view.Gravity.CENTER);
+                int margin = Math.round(10 * getResources().getDisplayMetrics().density);
+                body.setPadding(margin, margin, margin, margin);
+                body.addView(picker, placement);
+                new AlertDialog.Builder(DesignActivity.this).setTitle("Escolher ano").setView(body)
+                    .setNegativeButton("Cancelar", null)
+                    .setPositiveButton("Aplicar", (dialog, action) ->
+                        web.evaluateJavascript("window.allembraYearSelected(" + picker.getValue() + ")", null))
+                    .show();
+            });
+        }
         @JavascriptInterface public void micStop() { runOnUiThread(DesignActivity.this::stopNativeMic); }
         @JavascriptInterface public void micCancel() {
             runOnUiThread(() -> { micPermissionPending = false; microphone.discard(); });
@@ -369,8 +397,24 @@ public final class DesignActivity extends Activity {
             }, "allembra-share-media").start();
         }
 
-        @JavascriptInterface public void sharePrint(int left, int top, int width, int height, int viewportScroll, boolean story) {
-            runOnUiThread(() -> captureLetter(left, top, width, height, story));
+        @JavascriptInterface public void shareCard(String png, boolean story) {
+            if (png == null || png.length() > 10 * 1024 * 1024) return;
+            new Thread(() -> {
+                try {
+                    byte[] content = Base64.decode(png, Base64.NO_WRAP);
+                    BitmapFactory.Options size = new BitmapFactory.Options();
+                    size.inJustDecodeBounds = true;
+                    BitmapFactory.decodeByteArray(content, 0, content.length, size);
+                    if (!"image/png".equals(size.outMimeType) || size.outWidth != 1080
+                            || size.outHeight != (story ? 1920 : 2160))
+                        throw new IOException("Formato do print inválido.");
+                    File file = ShareFiles.create(DesignActivity.this, "carta", "png");
+                    try (FileOutputStream output = new FileOutputStream(file)) { output.write(content); }
+                    runOnUiThread(() -> openShare(fileIntent(file, "image/png")));
+                } catch (IOException | IllegalArgumentException failure) {
+                    backupStatus("Não foi possível preparar o print.");
+                }
+            }, "allembra-share-print").start();
         }
 
         @JavascriptInterface public void draftRecoveryEmail(String address, String envelope) {
@@ -484,41 +528,6 @@ public final class DesignActivity extends Activity {
         if (isDestroyed()) return;
         try { startActivity(Intent.createChooser(send, "Compartilhar com")); }
         catch (ActivityNotFoundException unavailable) { backupStatus("Nenhum app de compartilhamento está disponível."); }
-    }
-
-    private void captureLetter(int left, int top, int requestedWidth, int requestedHeight, boolean story) {
-        int x = Math.max(0, left), y = Math.max(0, top);
-        int width = Math.min(requestedWidth - Math.max(0, -left), web.getWidth() - x);
-        int height = Math.min(requestedHeight - Math.max(0, -top), web.getHeight() - y);
-        if (width <= 0 || height <= 0 || (long) width * height > 8_000_000) {
-            backupStatus("Deixe a carta visível para capturar o print.");
-            return;
-        }
-        // WebView#draw renders the visible viewport at its present scroll position.
-        Bitmap image = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
-        Canvas canvas = new Canvas(image);
-        canvas.translate(-x, -y);
-        web.draw(canvas);
-        new Thread(() -> {
-            try {
-                File file = ShareFiles.create(this, "carta", "png");
-                try (FileOutputStream output = new FileOutputStream(file)) {
-                    int targetHeight = story ? 1920 : 2160;
-                    Bitmap card = Bitmap.createBitmap(1080, targetHeight, Bitmap.Config.ARGB_8888);
-                    try {
-                        Canvas layout = new Canvas(card);
-                        layout.drawColor(0xFF075878);
-                        float scale = Math.min(960F / image.getWidth(), (targetHeight - 200F) / image.getHeight());
-                        float w = image.getWidth() * scale, h = image.getHeight() * scale;
-                        layout.drawBitmap(image, null, new android.graphics.RectF((1080-w)/2, (targetHeight-h)/2,
-                            (1080+w)/2, (targetHeight+h)/2), new android.graphics.Paint(android.graphics.Paint.FILTER_BITMAP_FLAG));
-                        if (!card.compress(Bitmap.CompressFormat.PNG, 100, output)) throw new IOException();
-                    } finally { card.recycle(); }
-                }
-                runOnUiThread(() -> openShare(fileIntent(file, "image/png")));
-            } catch (IOException failure) { backupStatus("Não foi possível preparar o print."); }
-            finally { image.recycle(); }
-        }, "allembra-share-print").start();
     }
 
     private final VaultBridge dataBridge = new VaultBridge();

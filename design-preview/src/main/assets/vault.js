@@ -61,7 +61,7 @@
       hours:Number.isInteger(options.hours)&&options.hours>=1&&options.hours<=168?options.hours:24,
       notifications:options.notifications===true,
       mediaLabels:['text','both','icons'].includes(options.mediaLabels)?options.mediaLabels:'text',
-      boldLabels:options.boldLabels!==false,
+      boldLabels:options.boldLabels!==false,reviewGuideSeen:options.reviewGuideSeen===true,
       backup:['off','daily','weekly'].includes(options.backup)?options.backup:'off'
     }};
   }
@@ -75,7 +75,7 @@
     const data={
       drafts:await Promise.all(state.drafts.map(itemFile)),
       capsules:await Promise.all(state.capsules.map(async capsule=>({id:capsule.id,items:await Promise.all(capsule.items.map(itemFile))}))),
-      options:{hours:state.hours,notifications:state.notifications,mediaLabels:state.mediaLabels,boldLabels:state.boldLabels,backup:state.backup},
+      options:{hours:state.hours,notifications:state.notifications,mediaLabels:state.mediaLabels,boldLabels:state.boldLabels,reviewGuideSeen:state.reviewGuideSeen,backup:state.backup},
     };
     const iv=crypto.getRandomValues(new Uint8Array(12));
     const payload=await crypto.subtle.encrypt(descriptor(iv),key,encoder.encode(JSON.stringify(data)));
@@ -93,19 +93,19 @@
     if(dialog){if(dialog.open)dialog.close();dialog.remove();}
     dialog=document.createElement('dialog');
     dialog.className='ae-vault';
-    dialog.setAttribute('aria-label','Cofre criptografado');
+    dialog.setAttribute('aria-label','Dados criptografados');
     const settingUp=mode==='setup';
     const hasBio=mode==='unlock'&&bridge.biometricEnabled?.();
     const keyFile=mode==='key';
     dialog.innerHTML=`<form>
       <h2>${settingUp?'Sua chave de memória':mode==='restore'?'Recuperar backup':keyFile?'Recuperar sua frase':'Desbloquear Allembra'}</h2>
-      <p>${settingUp?'Crie uma frase de pelo menos 16 caracteres. Guarde-a no gerenciador de senhas ou em lugar seguro. Ela é necessária para recuperar o seu backup.':mode==='restore'?'Use a frase que protegeu este arquivo. Recuperar substitui o cofre atual.':keyFile?'Use a senha de emergência com que você cifrou este arquivo.':'Use a frase escolhida no primeiro acesso.'}</p>
+      <p>${settingUp?'Crie uma frase de pelo menos 16 caracteres. Guarde-a no gerenciador de senhas ou em lugar seguro. Ela é necessária para recuperar o seu backup.':mode==='restore'?'Use a frase que protegeu este arquivo. Recuperar substitui o Relicário atual.':keyFile?'Use a senha de emergência com que você cifrou este arquivo.':'Use a frase escolhida no primeiro acesso.'}</p>
       <input type="text" name="user" value="Allembra" autocomplete="username" readonly hidden>
       <label>Frase de recuperação<input type="password" name="vault-password" autocomplete="${settingUp?'new-password':'current-password'}" required maxlength="512"></label><button type="button" class="ae-eye" data-eye>Mostrar frase</button>
-      ${settingUp?'<label>Repita a frase<input type="password" name="confirmation" autocomplete="new-password" required maxlength="512"></label>':''}
-      ${mode==='restore'?'<label><input type="checkbox" name="replace" required> Confirmo a substituição do cofre</label>':''}
+      ${settingUp?'<label>Repita a frase<input type="password" name="confirmation" autocomplete="new-password" required maxlength="512"></label><label class="ae-first-bio"><span><strong>Ativar biometria</strong><small>Recomendado para desbloquear mais rápido neste aparelho.</small></span><input type="checkbox" name="first-bio"></label>':''}
+      ${mode==='restore'?'<label><input type="checkbox" name="replace" required> Confirmo a substituição do Relicário</label>':''}
       <p role="alert"></p>
-      <button class="ae-primary" type="submit">${settingUp?'Criar meu cofre':mode==='restore'||keyFile?'Recuperar':'Desbloquear'}</button>
+      <button class="ae-primary" type="submit">${settingUp?'Criar meu Relicário':mode==='restore'||keyFile?'Recuperar':'Desbloquear'}</button>
       ${hasBio?'<button type="button" data-gate-bio>Usar biometria</button>':''}
       ${mode==='restore'||keyFile?'<button type="button" data-gate-cancel>Cancelar</button>':'<button type="button" data-gate-restore>Já tenho um backup</button>'}
     </form>`;
@@ -152,16 +152,18 @@
           const candidate=await derive(phrase,sourceSalt);
           const clear=await crypto.subtle.decrypt(descriptor(iv),candidate,cipher);
           const data=restored(JSON.parse(decoder.decode(clear)));
-          if(mode==='restore'&&!bridge.writeVault(raw))throw new Error('Não foi possível escrever o cofre restaurado.');
+          if(mode==='restore'&&!bridge.writeVault(raw))throw new Error('Não foi possível gravar o Relicário restaurado.');
           key=candidate;salt=sourceSalt;
           Object.assign(current,{drafts:data.drafts,capsules:data.capsules,entries:data.entries},data.options);
           if(mode==='restore'){lockedEnvelope=raw;bridge.biometricClear?.();bridge.configure(current.backup,current.notifications,current.hours);}
         }
+        const enroll=settingUp&&form.elements['first-bio']?.checked;
         form.reset();dialog.close();dialog.remove();hooks.render();
+        if(enroll)bridge.biometricSave?.(phrase);
         if(mode==='restore')hooks.present('Backup recuperado.');
       } catch {
         key=formerKey;salt=formerSalt;
-        alert.textContent=settingUp?'Não foi possível criar o cofre. Tente novamente.':'Frase incorreta, arquivo incompatível ou falha ao abrir.';
+        alert.textContent=settingUp?'Não foi possível criar o Relicário. Tente novamente.':'Frase incorreta, arquivo incompatível ou falha ao abrir.';
       } finally {busy=false;submit.disabled=false;}
     });
     dialog.showModal();

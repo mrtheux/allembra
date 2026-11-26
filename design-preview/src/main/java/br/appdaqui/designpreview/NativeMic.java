@@ -15,7 +15,7 @@ final class NativeMic {
     private final Context context;
     private final File recording;
     private MediaRecorder recorder;
-    private boolean finished;
+    private boolean finished, paused;
 
     NativeMic(Context context) {
         this.context = context;
@@ -51,8 +51,18 @@ final class NativeMic {
         }
     }
 
+    synchronized boolean setPaused(boolean next) {
+        if (recorder == null) return false;
+        if (next == paused) return true;
+        try {
+            if (next) recorder.pause(); else recorder.resume();
+            paused = next;
+            return true;
+        } catch (RuntimeException notReady) { return false; }
+    }
+
     synchronized int level() {
-        try { return recorder == null ? 0 : recorder.getMaxAmplitude(); }
+        try { return recorder == null || paused ? 0 : recorder.getMaxAmplitude(); }
         catch (IllegalStateException unavailable) { return 0; }
     }
 
@@ -65,6 +75,7 @@ final class NativeMic {
         } finally {
             recorder.release();
             recorder = null;
+            paused = false;
         }
         finished = recording.length() > 0 && recording.length() <= MAX_BYTES;
         if (!finished) recording.delete();
@@ -91,8 +102,10 @@ final class NativeMic {
             try { recorder.stop(); } catch (RuntimeException ignored) {}
             recorder.release();
             recorder = null;
+            paused = false;
         }
         finished = false;
+        paused = false;
         recording.delete();
     }
 }

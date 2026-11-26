@@ -35,3 +35,11 @@ Foto e vídeo são capturados pelo app de câmera do Android. O Allembra solicit
 A configuração de biometria exige a frase e autenticação forte do dispositivo. A frase de emergência por e-mail fica cifrada com uma senha independente. O app abre o painel de compartilhamento para revisão, com o destino preenchido quando o cliente aceita essa informação.
 
 A ficha, o inventário de dados e o rascunho de política estão em [Preparação para a Play Store](../docs/play-store-pt-br.md).
+
+## Testes da revisão 0.7
+
+O **Relicário** reúne apenas registros já liberados. Abra pelo cadeado destravado no rodapé e alterne entre cartões deslizáveis e galeria. Ajustes ficam no nome ou símbolo no topo. A confirmação inicial de gravação descreve Gravar, Selar e Descartar.
+
+No áudio, toque para pausar e retomar. Segure para encerrar ou use a ação explícita de encerrar. Teste as duas transições no Galaxy. O seletor de ano usa a roda nativa do Android. A prévia 0.7 instala em paralelo. Exporte o backup do 0.6 e recupere-o no 0.7 se quiser manter os registros de teste.
+
+O print é composto a partir da carta, em PNG de 1080 × 2160 (1:2) ou 1080 × 1920 (9:16). O seletor de formato nunca integra essa composição. Textos extensos podem ser abreviados com reticências no print. O conteúdo integral permanece no Relicário.

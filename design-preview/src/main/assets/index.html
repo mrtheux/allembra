@@ -12,7 +12,7 @@
 <div id="allembra-editorial">
   <article class="ae-phone" aria-label="Allembra">
     <header class="ae-bar">
-      <strong><span class="ae-mark" aria-hidden="true"><b></b><i></i><em></em></span>Allembra</strong>
+      <button type="button" class="ae-brand" data-page="settings" aria-label="Allembra · Ajustes"><span class="ae-mark" aria-hidden="true"><b></b><i></i><em></em></span>Allembra</button>
       <button type="button" data-action="notice" aria-label="Ver notificação de exemplo"><span class="ae-glyph ae-bell" aria-hidden="true"><b></b></span></button>
     </header>
     <div class="ae-stage"><section class="ae-page"></section></div>
@@ -20,12 +20,11 @@
       <span class="ae-nav-drop" aria-hidden="true"></span>
       <button type="button" data-page="week" aria-label="Cápsulas"><i data-lucide="archive" aria-hidden="true"></i></button>
       <button type="button" data-page="home" aria-label="Registrar" aria-current="page"><i data-lucide="feather" aria-hidden="true"></i></button>
-      <button type="button" data-page="settings" aria-label="Ajustes"><i data-lucide="settings-2" aria-hidden="true"></i></button>
+      <button type="button" data-page="relic" aria-label="Relicário"><i data-lucide="lock-open" aria-hidden="true"></i></button>
     </nav>
     <dialog class="ae-notice" aria-labelledby="ae-notice-title">
       <div class="ae-notice-content">
-        <div class="ae-notice-masthead"><span class="ae-mark" aria-hidden="true"><b></b><i></i><em></em></span><strong>Allembra</strong></div>
-        <span class="ae-small">Cápsula disponível</span>
+        <div class="ae-notice-masthead"><span class="ae-mark" aria-hidden="true"><b></b><i></i><em></em></span><strong>Allembra</strong><span class="ae-small">Cápsula disponível</span></div>
         <h2 id="ae-notice-title">Uma manhã<br>sem pressa.</h2>
         <p>Uma lembrança sua está pronta para abrir.</p>
       </div>
@@ -325,6 +324,42 @@ html,body{width:100%;max-width:100%;overflow-x:hidden}
 #allembra-editorial .ae-letter-signature{text-align:right;align-self:end;font:600 19px Newsreader,Georgia,serif}
 #allembra-editorial .ae-eye{justify-self:end;text-decoration:underline;text-underline-offset:3px}
 #allembra-editorial .ae-security input[type=email]{width:100%;min-height:44px;padding:7px}
+#allembra-editorial .ae-bar .ae-brand{display:flex;align-items:center;gap:8px;padding:0;font:600 23px Newsreader,Georgia,serif}
+#allembra-editorial .ae-phone[data-scene=relic]{--scene:#075878}
+#allembra-editorial .ae-relic-heading{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:9px}
+#allembra-editorial .ae-relic-toggle{display:flex;align-items:center;gap:4px}
+#allembra-editorial .ae-relic-toggle button[aria-pressed=true]{background:#ffbb23;color:#18242a}
+#allembra-editorial .ae-relic-items{display:grid;gap:16px;margin-top:6px;padding-bottom:10px}
+#allembra-editorial .ae-relic-items[data-view=cards]{grid-auto-flow:column;grid-auto-columns:88%;overflow-x:auto;overscroll-behavior-x:contain;scroll-snap-type:x mandatory;touch-action:pan-y}
+#allembra-editorial .ae-relic-items[data-view=grid]{grid-template-columns:repeat(2,minmax(0,1fr))}
+#allembra-editorial .ae-relic-card{scroll-snap-align:start;background:#fff9e9;color:#21313a;min-width:0;text-align:left;min-height:185px;display:grid;align-content:start;gap:9px;padding:18px}
+#allembra-editorial .ae-relic-items[data-view=grid] .ae-relic-card{min-height:151px;padding:12px}
+#allembra-editorial .ae-relic-card strong{font:600 25px/.94 Newsreader,Georgia,serif;overflow-wrap:anywhere}
+#allembra-editorial .ae-relic-card p{white-space:pre-wrap}
+#allembra-editorial .ae-relic-card .ae-relic-glyph{padding:18px 0}
+#allembra-editorial .ae-relic-card img{width:100%;height:106px;object-fit:cover;border-radius:8px}
+#allembra-editorial .ae-mic,#allembra-editorial .ae-mic[aria-pressed=true]{background:#ad2633;color:#fff;width:64px;height:64px;box-shadow:0 3px 7px #132f3340;touch-action:none}
+#allembra-editorial .ae-mic svg,#allembra-editorial .ae-mic i{color:white;width:25px;height:25px}
+#allembra-editorial .ae-wavebox[data-mic-side=right]{justify-content:flex-end}
+#allembra-editorial .ae-wavebox[data-mic-side=right] canvas{left:auto;right:0;width:0;visibility:hidden}
+#allembra-editorial .ae-finish-audio{align-self:flex-start;text-decoration:underline;text-underline-offset:3px}
+#allembra-editorial .ae-save-menu{gap:14px;padding:19px;border-radius:21px}
+#allembra-editorial .ae-review-title{display:grid;gap:4px}
+#allembra-editorial .ae-save-options button{display:grid;align-content:center;gap:3px;background:#f1e8d3}
+#allembra-editorial .ae-save-options button.ae-primary{background:#ffbb23}
+#allembra-editorial .ae-save-options button small{font-size:10px;line-height:1.2;font-weight:400}
+#allembra-editorial .ae-notice{padding:23px}
+#allembra-editorial .ae-notice-content{gap:9px;margin-bottom:20px}
+#allembra-editorial .ae-notice-masthead{margin-bottom:9px;padding-bottom:10px;border-bottom:1px solid #fff9e93b}
+#allembra-editorial .ae-notice-masthead .ae-small{margin-left:auto;text-align:right;font:650 10px/1.3 Inter,system-ui,sans-serif;letter-spacing:.07em}
+#allembra-editorial .ae-notice .ae-actions [data-action=dismiss]{flex:0 0 auto}
+#allembra-editorial .ae-notice .ae-actions [data-action=open]{flex:1}
+#allembra-editorial .ae-notice h2{font-size:44px;line-height:.91}
+#allembra-editorial .ae-notice .ae-actions{gap:10px}
+#allembra-editorial button:active{filter:brightness(.8)}
+#allembra-editorial .ae-vault form>label.ae-first-bio{display:flex;justify-content:space-between;align-items:center;gap:8px;margin:5px 0}
+#allembra-editorial .ae-first-bio span{display:grid;gap:3px}
+#allembra-editorial .ae-first-bio small{font-size:11px}
 </style>
 <script>
 (() => {
@@ -357,7 +392,7 @@ html,body{width:100%;max-width:100%;overflow-x:hidden}
   const button = (action,label,style='') => `<button type="button" data-action="${action}" class="${style}">${label}</button>`;
   const backButton = action => `<button type="button" data-action="${action}" class="ae-back" aria-label="Voltar">${icons('arrow-left')}</button>`;
   const select = (field,items,selected) => `<select data-field="${field}" aria-label="${field==='kind'?'Tipo de registro':'Prazo'}">${items.map((label,i)=>`<option value="${i}"${i===selected?' selected':''}>${label}</option>`).join('')}</select>`;
-  const state = {page:'home', kind:0, term:3, mode:'individual', drafts:[], capsules:[], entries:new Map(), text:['','','',''], media:false, folded:false, showExample:false, hours:24, notifications:false, mediaLabels:'text', boldLabels:true, weekOffset:0, day:null, month:null, backup:'off'};
+  const state = {page:'home', kind:0, term:3, mode:'individual', drafts:[], capsules:[], entries:new Map(), text:['','','',''], media:false, folded:false, showExample:false, hours:24, notifications:false, mediaLabels:'text', boldLabels:true, reviewGuideSeen:false, relicView:'cards', weekOffset:0, day:null, month:null, backup:'off'};
   let stream, audioEngine, analyser, trackSource, recorder, drawId, audioActive=false, simulated=false, requestId=0, moving=false;
   let cameraStream, cameraRecorder, cameraPending=false, cameraVersion=0, cameraSaving=false, drag, suppressClick=false;
   const cameraType = kind => kind===1 || kind===2;
@@ -386,6 +421,16 @@ html,body{width:100%;max-width:100%;overflow-x:hidden}
   const pad = value => String(value).padStart(2,'0');
   const dateOf = date => date.getUTCFullYear()+'-'+pad(date.getUTCMonth()+1)+'-'+pad(date.getUTCDate());
   const showIcons = () => globalThis.lucide?.createIcons();
+  const received=()=>state.capsules.flatMap(capsule=>capsule.items.flatMap((entry,index)=>
+    entry.openAt<=Date.now()?[{...entry,id:capsule.id+'-'+index}]:[])).sort((a,b)=>b.openAt-a.openAt);
+  function mini(entry){
+    if(entry.kind===0)return '<p>'+escapeText(entry.content.slice(0,110))+'</p>';
+    if(entry.kind===1&&entry.content instanceof Blob){
+      const url=URL.createObjectURL(entry.content);reviewUrls.push(url);
+      return `<img src="${url}" alt="">`;
+    }
+    return `<p class="ae-relic-glyph">${icons(types[entry.kind][1])}</p>`;
+  }
   const entriesOn=key=>state.drafts.filter(entry=>entry.day===key);
   function week() {
     const now=parseDay(dateKey()), monday=new Date(now);
@@ -449,8 +494,25 @@ html,body{width:100%;max-width:100%;overflow-x:hidden}
   function collapseDay(){
     if(state.page==='week'&&state.day){state.day=null;showDay();}
   }
-  function shiftWeek(direction){
-    state.weekOffset=Math.min(0,state.weekOffset+direction);state.day=null;render();
+  let shiftingWeek=false;
+  async function shiftWeek(direction){
+    const next=Math.min(0,state.weekOffset+direction);
+    if(shiftingWeek||next===state.weekOffset)return;
+    shiftingWeek=true;
+    try{
+      const grid=q('.ae-week'), sign=direction>0?-1:1;
+      if(!reduce()&&grid?.animate){
+        await grid.animate([{opacity:1,transform:'none'},{opacity:.55,transform:`translateX(${sign*24}px) scale(1.04,.84)`},
+          {opacity:0,transform:`translateX(${sign*55}px) scale(1.10,.66)`}],
+          {duration:155,easing:'ease-in',fill:'forwards'}).finished.catch(()=>{});
+      }
+      state.weekOffset=next;state.day=null;render();
+      const incoming=q('.ae-week');
+      if(!reduce()&&incoming?.animate)incoming.animate([
+        {opacity:0,transform:`translateX(${-sign*54}px) scale(1.10,.66)`},
+        {opacity:.95,transform:`translateX(${sign*4}px) scale(1.03,.90)`,offset:.72},
+        {opacity:1,transform:'none'}],{duration:260,easing:'cubic-bezier(.2,.7,.3,1)'});
+    }finally{shiftingWeek=false;}
   }
   function showMonth(key){
     const date=parseDay(key);
@@ -474,10 +536,17 @@ html,body{width:100%;max-width:100%;overflow-x:hidden}
   }
   function chooseYear(){
     const year=state.month.getUTCFullYear();
+    if(globalThis.AllembraNative?.chooseYear){AllembraNative.chooseYear(year);return;}
+    const options=Array.from({length:201},(_,i)=>1900+i).map(value=>
+      `<option value="${value}"${value===year?' selected':''}>${value}</option>`).join('');
     q('.ae-month-content').innerHTML=`<h3 id="ae-month-title">Escolher ano</h3>
-      <form class="ae-year-form"><label class="ae-label">Ano<input type="number" min="1900" max="2100" required value="${year}"></label>
+      <form class="ae-year-form"><label class="ae-label">Ano<select>${options}</select></label>
       <div class="ae-actions">${button('month-back','Voltar')}<button type="submit" class="ae-primary">Aplicar</button></div></form>`;
   }
+  globalThis.allembraYearSelected=year=>{
+    if(!calendar.open||!state.month||!Number.isInteger(year)||year<1900||year>2100)return;
+    state.month.setUTCFullYear(year);renderMonth();
+  };
   const drop=q('.ae-nav-drop');
   let dropPosition, dropAnimation;
   const round='path("M2 23 C2 11 11 2 23 2 C35 2 44 11 44 23 C44 35 35 44 23 44 C11 44 2 35 2 23 Z")';
@@ -510,7 +579,7 @@ html,body{width:100%;max-width:100%;overflow-x:hidden}
     phone.dataset.scene = state.page==='capture' ? ['thought','camera','camera','audio'][state.kind] : state.page;
     const surface=getComputedStyle(phone).getPropertyValue('--scene').trim()||'#005a85';
     globalThis.AllembraNative?.surface(surface);
-    const tab=state.page==='letter'?'week':state.page==='seal'?'home':state.page;
+    const tab=state.page==='letter'?(state.opened?'relic':'week'):state.page==='seal'?'home':state.page;
     const current=q('nav [data-page="'+tab+'"]');
     phone.querySelectorAll('nav button').forEach(b => {
       if(b===current) b.setAttribute('aria-current','page');
@@ -537,7 +606,7 @@ html,body{width:100%;max-width:100%;overflow-x:hidden}
       } else {
         page.innerHTML=`<div class="ae-tools">${backButton('back')}</div><h2>${types[kind][0]}</h2>
           ${textType(kind)?'<textarea aria-label="Seu registro" placeholder="Querido eu do futuro…"></textarea>':
-          '<div class="ae-wavebox"><canvas role="img" aria-label="Forma de onda do áudio"></canvas><button type="button" class="ae-mic" data-action="mic" aria-pressed="false" aria-label="Iniciar gravação"></button></div><p class="ae-audio-label">Toque para gravar</p>'}
+          '<div class="ae-wavebox"><canvas role="img" aria-label="Forma de onda do áudio"></canvas><button type="button" class="ae-mic" data-action="mic" aria-pressed="false" aria-label="Iniciar gravação">'+icons('mic')+'</button></div><p class="ae-audio-label">Toque para gravar</p><button type="button" class="ae-finish-audio" data-action="finish-audio" hidden>Encerrar gravação</button>'}
           <p class="ae-status" role="status"></p>${feather}`;
         if(textType(kind)) q('textarea').value=state.text[kind];
         if(kind===3) wave(nowTime(),false);
@@ -561,12 +630,25 @@ html,body{width:100%;max-width:100%;overflow-x:hidden}
         <button type="button" data-action="week-next" aria-label="Próxima semana"${state.weekOffset===0?' disabled':''}>›</button>
         </div><div class="ae-week" aria-label="Registros desta semana">${week()}</div>
         <div class="ae-day-detail" hidden></div>
-        ${state.capsules.filter(item=>item.items.some(entry=>entry.openAt<=Date.now())).map(item=>button('letter-'+item.id,'Abrir cápsula','ae-primary')).join('')}
+        ${received().length?button('open-relic','Ver lembranças no Relicário','ae-primary'):''}
         ${state.showExample?'<section class="ae-letter"><h3>Uma manhã sem pressa</h3>'+button('open','Abrir carta','ae-primary')+'</section>':''}`;
       showDay();
     }
+    if(state.page==='relic'){
+      const memories=received();
+      page.innerHTML=`<div class="ae-relic-heading"><h2>Relicário</h2>
+        <div class="ae-relic-toggle" aria-label="Visualização do Relicário">
+          <button type="button" data-action="relic-cards" aria-label="Cartões" aria-pressed="${state.relicView==='cards'}">${icons('panels-top-left')}</button>
+          <button type="button" data-action="relic-grid" aria-label="Galeria" aria-pressed="${state.relicView==='grid'}">${icons('layout-grid')}</button>
+        </div></div>
+        ${memories.length?`<div class="ae-relic-items" data-view="${state.relicView}" aria-label="Lembranças recebidas">
+          ${memories.map(entry=>`<button type="button" class="ae-relic-card" data-action="relic-open-${entry.id}">
+            <small>${formatDay.format(parseDay(entry.day))}</small>
+            <strong>${types[entry.kind][0]}</strong>${mini(entry)}</button>`).join('')}</div>`:
+          '<p>As lembranças recebidas vão aparecer aqui.</p>'}`;
+    }
     if(state.page==='letter') page.innerHTML=`
-      ${backButton('week')}
+      ${backButton(state.opened?'open-relic':'week')}
       <h2>Relicário</h2>
       <div class="ae-letter"><span class="ae-small">${state.opened?'Cápsula':'Carta de exemplo'}</span><h3>${state.opened?'De mim, para mim.':'Uma manhã sem pressa.'}</h3>
       ${state.folded?(state.opened?state.opened.items.filter(entry=>entry.openAt<=Date.now()).map(preview).join(''):'<blockquote>“O melhor do meu dia foi tomar café sem pressa. Espero que você ainda encontre tempo para isso.”</blockquote>'):button('unfold','Desdobrar carta','ae-primary')}
@@ -612,8 +694,8 @@ html,body{width:100%;max-width:100%;overflow-x:hidden}
     }
     showIcons();
   }
-  async function go(destination, flip=false) {
-    if(moving) return;
+  async function go(destination, flip=true) {
+    if(moving||destination===state.page&&arguments.length===1) return;
     moving=true;
     try {
       if(state.page==='capture' && state.kind===3) stopAudio(true);
@@ -673,21 +755,49 @@ html,body{width:100%;max-width:100%;overflow-x:hidden}
       context.lineWidth=1.4;
       context.stroke();
     }
-    if(running && audioActive && !reduce()) drawId=requestAnimationFrame(next=>wave(next,true));
+    if(running && audioActive && !audioPaused && !reduce()) drawId=requestAnimationFrame(next=>wave(next,true));
   }
   let keepAudio=false,audioReviewWaiting=false,audioSettling=false,nativeAudio=false;
-  let levels=[],lastLevelAt=0;
+  let levels=[],lastLevelAt=0,audioPaused=false,micGesture,micHeld=false;
+  function markMic(status){
+    const button=q('.ae-mic');
+    if(!button)return;
+    const recording=status==='recording', paused=status==='paused';
+    button.setAttribute('aria-pressed',String(recording||paused));
+    button.setAttribute('aria-label',recording?'Pausar gravação':paused?'Continuar gravação':'Iniciar gravação');
+    button.innerHTML=icons(recording?'pause':paused?'play':'mic');
+    q('.ae-finish-audio').hidden=!(recording||paused);
+    showIcons();
+  }
+  function pauseAudio(pause){
+    if(!audioActive||audioSettling||pause===audioPaused)return;
+    if(nativeAudio){
+      globalThis.AllembraNative?.micPause?.(pause);
+      return;
+    }
+    try{
+      if(recorder){if(pause)recorder.pause();else recorder.resume();}
+      globalThis.allembraMicPaused(String(pause));
+    }catch{q('.ae-audio-label').textContent='Não foi possível alterar a gravação.';}
+  }
+  globalThis.allembraMicPaused=value=>{
+    if(state.kind!==3||state.page!=='capture'||!audioActive)return;
+    audioPaused=value==='true';
+    cancelAnimationFrame(drawId);
+    markMic(audioPaused?'paused':'recording');
+    q('.ae-audio-label').textContent=audioPaused?'Pressione para continuar. Pressione e segure para encerrar.':'Gravando · toque para pausar';
+    wave(nowTime(),!audioPaused);
+  };
   globalThis.allembraMicStarted=()=>{
     if(state.kind!==3||state.page!=='capture'){globalThis.AllembraNative?.micCancel();return;}
-    audioActive=true;nativeAudio=true;levels=[];
-    q('.ae-audio-label').textContent='Gravando · toque para parar';
+    audioActive=true;nativeAudio=true;audioPaused=false;levels=[];markMic('recording');
+    q('.ae-audio-label').textContent='Gravando · toque para pausar';
     wave(nowTime(),true);
   };
   globalThis.allembraMicFailed=message=>{
-    audioActive=false; nativeAudio=false;audioSettling=false;audioReviewWaiting=false;
+    audioActive=false; nativeAudio=false;audioSettling=false;audioReviewWaiting=false;audioPaused=false;
     if(state.kind!==3||state.page!=='capture')return;
-    q('.ae-mic').setAttribute('aria-pressed','false');
-    q('.ae-mic').setAttribute('aria-label','Iniciar gravação');
+    markMic('idle');
     q('.ae-audio-label').textContent=message;
     wave(nowTime(),false);
   };
@@ -697,19 +807,17 @@ html,body{width:100%;max-width:100%;overflow-x:hidden}
     if(!base64){globalThis.allembraMicFailed('Gravação curta ou indisponível. Tente novamente.');return;}
     const data=Uint8Array.from(atob(base64),char=>char.charCodeAt(0));
     state.media=new Blob([data],{type:'audio/mp4'});
-    audioActive=false;nativeAudio=false;audioSettling=false;cancelAnimationFrame(drawId);
-    q('.ae-mic').setAttribute('aria-pressed','false');
-    q('.ae-mic').setAttribute('aria-label','Iniciar gravação');
+    audioActive=false;nativeAudio=false;audioSettling=false;audioPaused=false;cancelAnimationFrame(drawId);
+    markMic('idle');
     q('.ae-audio-label').textContent='Áudio pronto para salvar';
     if(audioReviewWaiting){audioReviewWaiting=false;showSaveChoices();}
   };
   let savingRecord=false;
   async function startAudio() {
-    keepAudio=false;state.media=false;
+    keepAudio=false;state.media=false;audioPaused=false;
     const token=++requestId;
     audioActive=true; simulated=false;
-    q('.ae-mic').setAttribute('aria-pressed','true');
-    q('.ae-mic').setAttribute('aria-label','Parar gravação');
+    markMic('recording');
     q('.ae-audio-label').textContent='Aguardando microfone…';
     if(globalThis.AllembraNative?.micStart){
       nativeAudio=true;AllembraNative.micStart();return;
@@ -750,10 +858,11 @@ html,body{width:100%;max-width:100%;overflow-x:hidden}
       }
     }
     if(token!==requestId) return;
-    q('.ae-audio-label').textContent=simulated?'Onda de exemplo · microfone indisponível':'Gravando · toque para parar';
+    q('.ae-audio-label').textContent=simulated?'Onda de exemplo · microfone indisponível':'Gravando · toque para pausar';
     wave(nowTime(),true);
   }
   function stopAudio(leaving=false) {
+    audioPaused=false;
     if(nativeAudio){
       cancelAnimationFrame(drawId);audioActive=false;
       if(leaving){nativeAudio=false;audioSettling=false;globalThis.AllembraNative.micCancel();}
@@ -761,7 +870,7 @@ html,body{width:100%;max-width:100%;overflow-x:hidden}
       return;
     }
     requestId++;
-    const wasRecording=recorder?.state==='recording';
+    const wasRecording=recorder&&recorder.state!=='inactive';
     keepAudio=!leaving;
     if(wasRecording){audioSettling=!leaving;recorder.stop();}
     recorder=undefined;
@@ -911,6 +1020,8 @@ html,body{width:100%;max-width:100%;overflow-x:hidden}
     }
     button.style.right='auto';button.style.bottom='auto';
     button.style.left=(cx-half)+'px';button.style.top=(cy-half)+'px';
+    const wavebox=q('.ae-wavebox');
+    if(wavebox)wavebox.dataset.micSide=cx<page.clientWidth/2?'right':'left';
   }
   root.addEventListener('pointerdown',event=>{
     const button=event.target.closest('.ae-feather');
@@ -939,11 +1050,19 @@ html,body{width:100%;max-width:100%;overflow-x:hidden}
   function selectedContent(){
     return textType(state.kind)?q('textarea').value.trim():state.media;
   }
+  root.addEventListener('pointerdown',event=>{
+    const control=event.target.closest('.ae-mic');
+    if(!control||!event.isPrimary)return;
+    micHeld=false;
+    if(!audioActive||audioSettling)return;
+    micGesture=setTimeout(()=>{micHeld=true;stopAudio();},530);
+  });
+  for(const type of ['pointerup','pointercancel','pointerleave'])root.addEventListener(type,()=>clearTimeout(micGesture),true);
   function showSaveChoices(){
     if(q('.ae-save-menu[open]'))return;
     if(audioActive&&nativeAudio){audioReviewWaiting=true;stopAudio();return;}
     if(audioActive&&!simulated){
-      if(recorder?.state!=='recording'){q('.ae-status').textContent='Aguarde a autorização do microfone.';return;}
+      if(!recorder||recorder.state==='inactive'){q('.ae-status').textContent='Aguarde a autorização do microfone.';return;}
       audioReviewWaiting=true;stopAudio();return;
     }
     if(audioSettling){audioReviewWaiting=true;return;}
@@ -955,8 +1074,15 @@ html,body{width:100%;max-width:100%;overflow-x:hidden}
     const menu=document.createElement('dialog');
     menu.className='ae-save-menu';
     menu.setAttribute('aria-label','O que fazer com este registro');
-    menu.innerHTML=preview({kind:state.kind,content})+
-      `<div class="ae-save-options">${button('keep','Gravar')}${button('preseal','Selar','ae-primary')}${button('discard','Descartar')}</div>`;
+    const guide=!state.reviewGuideSeen;
+    const option=(action,label,hint,style='')=>button(action,`<strong>${label}</strong>${guide?'<small>'+hint+'</small>':''}`,style);
+    menu.innerHTML=`<div class="ae-review-title"><p class="ae-small">${types[state.kind][0]}</p><h3>Seu registro</h3></div>`+
+      preview({kind:state.kind,content})+
+      `<div class="ae-save-options" data-guide="${guide}">
+      ${option('keep','Gravar','Reveja no dia', 'ae-primary')}
+      ${option('preseal','Selar','Oculte até abrir')}
+      ${option('discard','Descartar','Apague esta captura')}
+      </div>`;
     phone.append(menu);
     menu.addEventListener('close',()=>{
       feather.setAttribute('aria-expanded','false');menu.remove();releaseReview();
@@ -981,8 +1107,9 @@ html,body{width:100%;max-width:100%;overflow-x:hidden}
     const key=dateKey(),entries=state.entries.get(key)||[];
     const entry={kind:state.kind,content,day:key,closed,term:-1};
     state.drafts.push(entry);state.entries.set(key,[...entries,state.kind]);
+    const previousGuide=state.reviewGuideSeen;state.reviewGuideSeen=true;
     if(!await persist()){
-      state.drafts.pop();if(entries.length)state.entries.set(key,entries);else state.entries.delete(key);savingRecord=false;return;
+      state.reviewGuideSeen=previousGuide;state.drafts.pop();if(entries.length)state.entries.set(key,entries);else state.entries.delete(key);savingRecord=false;return;
     }
     state.text[state.kind]='';state.media=false;
     playEffect(closed?'lock':'paper');
@@ -1017,6 +1144,11 @@ html,body{width:100%;max-width:100%;overflow-x:hidden}
       if(entry)entry.term=Number(event.target.value);
     }
   });
+  root.addEventListener('pointerdown',event=>{
+    const button=event.target.closest('button');
+    if(!button||button.disabled||reduce()||!button.animate)return;
+    button.animate([{opacity:1},{opacity:.59},{opacity:1}],{duration:195,easing:'ease-out'});
+  });
   root.addEventListener('click',event=>{
     const control=event.target.closest('button');
     if(!control || moving || savingRecord) {
@@ -1039,21 +1171,28 @@ html,body{width:100%;max-width:100%;overflow-x:hidden}
     if(action?.startsWith('kind-')){
       state.kind=Number(action.slice(5));state.media=false;go('capture',true);return;
     }
-    if(action?.startsWith('letter-')){
-      state.opened=state.capsules.find(item=>item.id===action.slice(7));
-      state.folded=false;go('letter',true);return;
+    if(action?.startsWith('relic-open-')){
+      if(cardDragged){cardDragged=false;return;}
+      const item=received().find(entry=>entry.id===action.slice(11));
+      if(!item)return;
+      state.opened={items:[item]};state.folded=true;go('letter',true);return;
     }
     switch(action){
-      case 'back':go('home',state.page==='capture');break;
+      case 'back':go('home');break;
       case 'notice':notice.showModal();break;
       case 'dismiss':notice.close();break;
       case 'open':if(notice.open)notice.close();state.opened=null;state.showExample=true;state.folded=false;go('letter',true);break;
       case 'unfold':state.folded=true;go('letter',true);break;
       case 'week':go('week');break;
+      case 'open-relic':go('relic');break;
+      case 'relic-cards':case 'relic-grid':state.relicView=action.slice(6);render();animatePage();break;
       case 'save':if(cameraType(state.kind))captureCamera();else showSaveChoices();break;
       case 'keep':addDraft(false);break;
       case 'preseal':addDraft(true);break;
-      case 'discard':state.text[state.kind]='';state.media=false;go('home',true);break;
+      case 'discard':
+        state.text[state.kind]='';state.media=false;
+        if(!state.reviewGuideSeen){state.reviewGuideSeen=true;persist();}
+        go('home',true);break;
       case 'week-prev':shiftWeek(-1);break;
       case 'week-next':shiftWeek(1);break;
       case 'calendar':showMonth(state.day||dateKey());break;
@@ -1067,7 +1206,12 @@ html,body{width:100%;max-width:100%;overflow-x:hidden}
       case 'print-post':shareFormat.close();shareLetter(true,false);break;
       case 'print-story':shareFormat.close();shareLetter(true,true);break;
       case 'print-close':shareFormat.close();break;
-      case 'mic':if(audioSettling)break;if(audioActive)stopAudio();else startAudio();break;
+      case 'mic':
+        if(micHeld){micHeld=false;break;}
+        if(audioSettling)break;
+        if(audioActive)pauseAudio(!audioPaused);else startAudio();
+        break;
+      case 'finish-audio':if(audioActive)stopAudio();break;
       case 'seal-flow':if(state.page==='home')state.day=dateKey();go('seal');break;
       case 'seal': {
         const selected=entriesOn(state.day||dateKey());
@@ -1112,10 +1256,7 @@ html,body{width:100%;max-width:100%;overflow-x:hidden}
     if(state.page!=='letter'||!state.folded||!globalThis.AllembraNative)return;
     const letter=q('.ae-letter');
     if(print){
-      const bounds=letter.getBoundingClientRect();
-      const scale=window.devicePixelRatio||1;
-      AllembraNative.sharePrint(Math.round(bounds.left*scale),Math.round(bounds.top*scale),
-        Math.round(bounds.width*scale),Math.round(bounds.height*scale),Math.round(window.scrollY*scale),story);
+      renderShareCard(letter,story).catch(()=>presentStatus('Não foi possível gerar o print.'));
       return;
     }
     const texts=state.opened?state.opened.items.filter(entry=>entry.kind===0&&entry.openAt<=Date.now()).map(entry=>entry.content):
@@ -1127,6 +1268,79 @@ html,body{width:100%;max-width:100%;overflow-x:hidden}
       else shareFormat.showModal();
     }
   }
+  async function renderShareCard(letter,story){
+    const title=letter.querySelector('h3')?.textContent||'De mim, para mim.';
+    const body=[...letter.querySelectorAll('blockquote,.ae-record-text')].map(node=>node.textContent).join('\n\n');
+    const media=letter.querySelector('img')||letter.querySelector('video');
+    const mediaSize=media&&[media.naturalWidth||media.videoWidth,media.naturalHeight||media.videoHeight];
+    const height=story?1920:2160;
+    const canvas=document.createElement('canvas');
+    canvas.width=1080;canvas.height=height;
+    const context=canvas.getContext('2d');
+    if(!context)throw new Error();
+    if(document.fonts?.load) await Promise.all([document.fonts.load('600 106px Newsreader'),document.fonts.load('400 53px Newsreader')]);
+    context.fillStyle='#075878';
+    context.fillRect(0,0,1080,height);
+    context.fillStyle='#fff9e9';
+    context.fillRect(68,88,944,height-176);
+    context.fillStyle='#123748';
+    context.font='600 27px Inter, sans-serif';
+    context.fillText('ALLEMBRA  /  RELICÁRIO',130,201);
+    context.font='600 106px Newsreader, Georgia, serif';
+    const titleLines=wrapCardText(context,title,820,3);
+    let y=344;
+    for(const line of titleLines){context.fillText(line,130,y);y+=100;}
+    if(mediaSize?.every(value=>value>0)){
+      const scale=Math.min(820/mediaSize[0],(height-y-355)/mediaSize[1]);
+      if(scale>0)context.drawImage(media,(1080-mediaSize[0]*scale)/2,y+18,mediaSize[0]*scale,mediaSize[1]*scale);
+    }else{
+      context.font='400 53px Newsreader, Georgia, serif';
+      const available=body||'Uma lembrança guardada.';
+      const lines=wrapCardText(context,available,820,Math.floor((height-y-220)/65));
+      y+=88;
+      for(const line of lines){context.fillText(line,130,y);y+=65;}
+    }
+    context.font='600 37px Newsreader, Georgia, serif';
+    context.textAlign='right';
+    context.fillText('Allembra',950,height-135);
+    const image=canvas.toDataURL('image/png').split(',')[1];
+    if(!image)throw new Error();
+    AllembraNative.shareCard(image,story);
+  }
+  function wrapCardText(context,text,width,maxLines){
+    if(maxLines<1)return [];
+    const lines=[];
+    for(const paragraph of text.split('\n')){
+      let line='';
+      for(const word of paragraph.trim().split(/\s+/)){
+        const candidate=line?line+' '+word:word;
+        if(line&&context.measureText(candidate).width>width){lines.push(line);line='';}
+        for(const character of (line?' ':'')+word){
+          if(line&&context.measureText(line+character).width>width){lines.push(line);line='';}
+          line+=character;
+        }
+        if(lines.length>maxLines)break;
+      }
+      lines.push(line);
+      if(lines.length>maxLines)break;
+    }
+    if(lines.length>maxLines){
+      lines.length=maxLines;
+      let last=lines[maxLines-1];
+      while(last&&context.measureText(last+'…').width>width)last=last.slice(0,-1);
+      lines[maxLines-1]=last+'…';
+    }
+    return lines;
+  }
+  function presentStatus(message){
+    let status=q('.ae-page [role=status]');
+    if(!status){
+      status=document.createElement('p');
+      status.setAttribute('role','status');
+      page.append(status);
+    }
+    status.textContent=message;
+  }
   async function shareMedia(blob){
     const bytes=new Uint8Array(await blob.arrayBuffer()),parts=[];
     for(let i=0;i<bytes.length;i+=8192)parts.push(String.fromCharCode(...bytes.subarray(i,i+8192)));
@@ -1135,13 +1349,30 @@ html,body{width:100%;max-width:100%;overflow-x:hidden}
   root.addEventListener('submit',event=>{
     if(!event.target.matches('.ae-year-form'))return;
     event.preventDefault();
-    const input=event.target.querySelector('input');
-    if(input.reportValidity()){state.month.setUTCFullYear(Number(input.value));renderMonth();}
+    const input=event.target.querySelector('select');
+    globalThis.allembraYearSelected(Number(input.value));
   });
+  let cardDrag, cardDragged=false;
+  root.addEventListener('pointerdown',event=>{
+    const carousel=event.target.closest('.ae-relic-items[data-view=cards]');
+    if(!carousel||!event.isPrimary)return;
+    cardDragged=false;
+    cardDrag={id:event.pointerId,x:event.clientX,y:event.clientY,carousel};
+  });
+  root.addEventListener('pointerup',event=>{
+    if(cardDrag?.id!==event.pointerId)return;
+    const {carousel,x,y}=cardDrag;cardDrag=undefined;
+    const delta=event.clientX-x;
+    if(Math.abs(delta)<33||Math.abs(delta)<Math.abs(event.clientY-y)*1.3)return;
+    cardDragged=true;
+    const stride=(carousel.firstElementChild?.offsetWidth||carousel.clientWidth)+16;
+    carousel.scrollBy({left:delta<0?stride:-stride,behavior:reduce()?'auto':'smooth'});
+  });
+  root.addEventListener('pointercancel',()=>{cardDrag=undefined;});
   let screenSwipe, lastCenterTap;
   root.addEventListener('pointerdown',event=>{
     if(!event.isPrimary||!['home','week','settings'].includes(state.page)||
-      !event.target.closest('.ae-stage')||event.target.closest('.ae-week,.ae-day-detail,button,input,select,textarea,dialog'))return;
+      !event.target.closest('.ae-stage')||event.target.closest('.ae-week,.ae-day-detail,.ae-relic-items,button,input,select,textarea,dialog'))return;
     screenSwipe={id:event.pointerId,x:event.clientX,y:event.clientY};
   });
   root.addEventListener('pointerup',event=>{
@@ -1156,7 +1387,7 @@ html,body{width:100%;max-width:100%;overflow-x:hidden}
       return;
     }
     if(Math.abs(x)<45||Math.abs(x)<Math.abs(y)*1.4)return;
-    const tabs=['week','home','settings'];
+    const tabs=['week','home','relic'];
     const target=tabs[tabs.indexOf(state.page)+(x<0?1:-1)];
     if(target)go(target);
   });
@@ -1205,7 +1436,7 @@ html,body{width:100%;max-width:100%;overflow-x:hidden}
     const gate=q('.ae-vault[open]');
     if(gate)return false;
     if(state.page==='home')return false;
-    go(state.page==='letter'?'week':'home',state.page==='capture');
+    go(state.page==='letter'?(state.opened?'relic':'week'):'home');
     return true;
   };
   window.addEventListener('allembra:pause',()=>{
@@ -1217,9 +1448,7 @@ html,body{width:100%;max-width:100%;overflow-x:hidden}
   });
   window.addEventListener('pagehide',()=>{stopAudio(true);stopCamera();});
   render();
-  if(globalThis.AllembraStore)AllembraStore.start(state,{render,present:message=>{
-    const node=q('.ae-status');if(node)node.textContent=message;
-  }});
+  if(globalThis.AllembraStore)AllembraStore.start(state,{render,present:presentStatus});
   async function persist(){
     try {
       if(globalThis.AllembraStore)await AllembraStore.save(state);
