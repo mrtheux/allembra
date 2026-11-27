@@ -11,6 +11,11 @@
 <body>
 <div id="allembra-editorial">
   <output class="ae-save-status" role="status"></output>
+  <template id="ae-responsibility">
+    <p>Você decide quais registros criar, guardar e compartilhar. Respeite a lei, a privacidade e os direitos de outras pessoas. Obtenha as autorizações necessárias antes de gravar, guardar ou compartilhar conteúdo de terceiros.</p>
+    <p>O Instituto Cogita fornece o aplicativo, não tem acesso ao Relicário local e não examina nem aprova os registros. Guarde sua frase de recuperação com segurança. Ao exportar um backup ou compartilhar um registro, confira o destino e quem terá acesso à cópia.</p>
+    <p>Na medida permitida pela legislação, o Instituto Cogita não responde por conteúdo ilícito inserido pelo usuário, pelo compartilhamento que ele autorizar ou por perda de acesso decorrente exclusivamente da perda da sua frase. Este aviso preserva os direitos e as garantias previstos em lei e as responsabilidades do Instituto Cogita pela prestação do serviço e pela proteção de dados.</p>
+  </template>
   <article class="ae-phone" aria-label="Allembra">
     <header class="ae-bar">
       <button type="button" class="ae-brand" data-page="settings" aria-label="Allembra · Ajustes"><svg class="ae-mark" viewBox="0 0 100 100" aria-hidden="true"><path d="M14,77 L42,17 L51,17 L52,29 L32,69 L43,64 L39,75 L27,79 L23,83 Z"/><path d="M50,17 L57,17 L86,77 L77,83 L68,72 L44,72 L49,62 L64,62 L50,29 Z"/><path d="M45.4,49 a5.6,5.6 0,1 0,11.2,0 a5.6,5.6 0,1 0,-11.2,0 Z"/></svg>Allembra</button>
@@ -296,6 +301,9 @@ html,body{margin:0;min-height:100%;background:#005a85}
 #allembra-editorial .ae-vault form,#allembra-editorial .ae-vault form>label{display:grid;gap:9px}
 #allembra-editorial .ae-vault h2{font-size:42px;color:#082b3b}
 #allembra-editorial .ae-vault input[type=password]{width:100%;min-height:44px;padding:7px}
+#allembra-editorial .ae-responsibility{font:400 14px/1.5 Inter,system-ui,sans-serif}
+#allembra-editorial .ae-responsibility summary{cursor:pointer;font-weight:600;padding:8px 0}
+#allembra-editorial .ae-responsibility p{margin:8px 0}
 #allembra-editorial .ae-vault [role=alert]:empty{display:none}
 #allembra-editorial .ae-vault [role=alert]{color:#8b241f}
 #allembra-editorial .ae-save-menu + .ae-status{z-index:5}
@@ -696,6 +704,7 @@ html,body{width:100%;max-width:100%;overflow-x:hidden}
        <section class="ae-preferences" aria-labelledby="ae-access-title">
          <h3 id="ae-access-title">Segurança</h3>
          <div class="ae-backup-actions">${button('biometric-enable','Configurar biometria')}${button('recovery-email','Backup da chave por e-mail')}</div>
+         <details class="ae-responsibility"><summary>Responsabilidade pelo conteúdo</summary>${q('#ae-responsibility').innerHTML}</details>
        </section>
        ${button('settings-save','Salvar ajustes','ae-primary ae-pref-save')}
        <p class="ae-status" role="status"></p>

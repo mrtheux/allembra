@@ -106,6 +106,7 @@
       <label>Frase de recuperação<input type="password" name="vault-password" autocomplete="${settingUp?'new-password':'current-password'}" required maxlength="512"></label><button type="button" class="ae-eye" data-eye>Mostrar frase</button>
       ${settingUp?'<label>Repita a frase<input type="password" name="confirmation" autocomplete="new-password" required maxlength="512"></label><label class="ae-first-bio"><span><strong>Ativar biometria</strong><small>Recomendado para desbloquear mais rápido neste aparelho.</small></span><input type="checkbox" name="first-bio"></label>':''}
       ${mode==='restore'?'<label><input type="checkbox" name="replace" required> Confirmo a substituição do Relicário</label>':''}
+      ${settingUp?`<p>Guarde e compartilhe apenas conteúdo que você tem direito de usar.</p><details class="ae-responsibility"><summary>Responsabilidade pelo conteúdo</summary>${document.querySelector('#ae-responsibility').innerHTML}</details>`:''}
       <p role="alert"></p>
       <button class="${hasBio?'':'ae-primary'}" type="submit">${settingUp?'Criar meu Relicário':mode==='restore'||keyFile?'Recuperar':'Desbloquear'}</button>
       ${mode==='restore'||keyFile?'<button type="button" data-gate-cancel>Cancelar</button>':'<button type="button" data-gate-restore>Já tenho um backup</button>'}
