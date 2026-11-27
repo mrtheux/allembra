@@ -12,7 +12,7 @@
 <div id="allembra-editorial">
   <article class="ae-phone" aria-label="Allembra">
     <header class="ae-bar">
-      <button type="button" class="ae-brand" data-page="settings" aria-label="Allembra · Ajustes"><span class="ae-mark" aria-hidden="true"><b></b><i></i><em></em></span>Allembra</button>
+      <button type="button" class="ae-brand" data-page="settings" aria-label="Allembra · Ajustes"><svg class="ae-mark" viewBox="0 0 100 100" aria-hidden="true"><path d="M14,77 L42,17 L51,17 L52,29 L32,69 L43,64 L39,75 L27,79 L23,83 Z"/><path d="M50,17 L57,17 L86,77 L77,83 L68,72 L44,72 L49,62 L64,62 L50,29 Z"/><path d="M45.4,49 a5.6,5.6 0,1 0,11.2,0 a5.6,5.6 0,1 0,-11.2,0 Z"/></svg>Allembra</button>
       <button type="button" data-action="notice" aria-label="Ver notificação de exemplo"><span class="ae-glyph ae-bell" aria-hidden="true"><b></b></span></button>
     </header>
     <div class="ae-stage"><section class="ae-page"></section></div>
@@ -24,7 +24,7 @@
     </nav>
     <dialog class="ae-notice" aria-labelledby="ae-notice-title">
       <div class="ae-notice-content">
-        <div class="ae-notice-masthead"><span class="ae-mark" aria-hidden="true"><b></b><i></i><em></em></span><strong>Allembra</strong><span class="ae-small">Cápsula disponível</span></div>
+        <div class="ae-notice-masthead"><svg class="ae-mark" viewBox="0 0 100 100" aria-hidden="true"><path d="M14,77 L42,17 L51,17 L52,29 L32,69 L43,64 L39,75 L27,79 L23,83 Z"/><path d="M50,17 L57,17 L86,77 L77,83 L68,72 L44,72 L49,62 L64,62 L50,29 Z"/><path d="M45.4,49 a5.6,5.6 0,1 0,11.2,0 a5.6,5.6 0,1 0,-11.2,0 Z"/></svg><strong>Allembra</strong><span class="ae-small">Cápsula disponível</span></div>
         <h2 id="ae-notice-title">Uma manhã<br>sem pressa.</h2>
         <p>Uma lembrança sua está pronta para abrir.</p>
       </div>
@@ -45,10 +45,6 @@
 #allembra-editorial .ae-bar{display:flex;justify-content:space-between;align-items:center;padding:12px 20px 4px}
 #allembra-editorial .ae-bar strong{display:flex;gap:8px;align-items:center;font:600 22px Newsreader,Georgia,serif}
 #allembra-editorial .ae-mark{position:relative;display:inline-block;width:27px;aspect-ratio:1;flex:none}
-#allembra-editorial .ae-mark>*{position:absolute;inset:0}
-#allembra-editorial .ae-mark b{background:#e9f1f2;clip-path:polygon(1% 6%,46% 26%,36% 39%,14% 27%,14% 73%,36% 61%,46% 74%,1% 94%)}
-#allembra-editorial .ae-mark i{background:#85c7cf;clip-path:polygon(99% 6%,54% 26%,64% 39%,86% 27%,86% 73%,64% 61%,54% 74%,99% 94%)}
-#allembra-editorial .ae-mark em{background:var(--gold);clip-path:polygon(31% 27%,69% 27%,55% 50%,69% 73%,31% 73%,45% 50%)}
 #allembra-editorial .ae-stage{flex:1;display:grid;perspective:1100px}
 #allembra-editorial .ae-page{min-width:0;min-height:514px;display:flex;flex-direction:column;gap:14px;padding:21px 20px 19px;box-sizing:border-box;background:var(--blue);backface-visibility:hidden;transform-origin:center;position:relative}
 #allembra-editorial h2,#allembra-editorial h3,#allembra-editorial p{margin:0}
@@ -109,7 +105,6 @@
 #allembra-editorial .ae-notice[open]{animation:ae-enter .27s ease both}
 #allembra-editorial .ae-notice-content{background:repeating-linear-gradient(0deg,transparent 0 3px,#302c2508 3px 4px),#eee6d5;color:#25221e;padding:16px;border:1px solid #b7ad9b;border-radius:4px;display:grid;gap:9px}
 #allembra-editorial .ae-notice{background:#e6decd;color:#211e1a}
-#allembra-editorial .ae-notice-content .ae-mark>*{background:#38332c}
 #allembra-editorial .ae-notice h2{font-size:40px;border-top:3px double #544e43;padding-top:10px}
 #allembra-editorial .ae-notice .ae-primary{background:#2a2824;color:#faf3e4}
 #allembra-editorial .ae-nav button svg{stroke-width:1.45}
@@ -206,16 +201,13 @@
 #allembra-editorial .ae-notice-content{border:0;background:none;padding:0;margin-bottom:13px}
 #allembra-editorial .ae-notice .ae-actions button{background:none;color:#211e1a}
 #allembra-editorial .ae-notice .ae-primary{text-decoration:underline;text-underline-offset:4px}
-#allembra-editorial .ae-mark{width:34px;aspect-ratio:1;background:transparent}
-#allembra-editorial .ae-mark b{background:#fff4de;clip-path:polygon(14% 77%,42% 17%,51% 17%,52% 29%,32% 69%,43% 64%,39% 75%,27% 79%,23% 83%)}
-#allembra-editorial .ae-mark i{background:#7bcedd;clip-path:polygon(50% 17%,57% 17%,86% 77%,77% 83%,68% 72%,44% 72%,49% 62%,64% 62%,50% 29%)}
-#allembra-editorial .ae-mark em{background:#ffc453;clip-path:circle(5.6% at 51% 49%)}
-#allembra-editorial .ae-phone[data-scene=week] .ae-bar .ae-mark b{background:#142d3b}
-#allembra-editorial .ae-phone[data-scene=week] .ae-bar .ae-mark i{background:#285d72}
-#allembra-editorial .ae-phone[data-scene=week] .ae-bar .ae-mark em{background:#7b410f}
+#allembra-editorial svg.ae-mark{width:34px;height:34px;aspect-ratio:1;flex:none;background:transparent}
+#allembra-editorial .ae-mark path:nth-child(1){fill:var(--mark-left,#fff4de)}
+#allembra-editorial .ae-mark path:nth-child(2){fill:var(--mark-right,#7bcedd)}
+#allembra-editorial .ae-mark path:nth-child(3){fill:var(--mark-dot,#ffc453)}
+#allembra-editorial .ae-phone:is([data-scene=week],[data-scene=settings]) .ae-bar .ae-mark,
+#allembra-editorial .ae-vault-brand .ae-mark{--mark-left:#082b3b;--mark-right:#005a85;--mark-dot:#7b410f}
 #allembra-editorial .ae-notice-content .ae-mark{background:none;outline:0}
-#allembra-editorial .ae-notice-content .ae-mark b{background:#51493c}
-#allembra-editorial .ae-notice-content .ae-mark i,#allembra-editorial .ae-notice-content .ae-mark em{background:#51493c}
 #allembra-editorial [data-scene=settings] .ae-page{gap:16px;padding-bottom:16px}
 #allembra-editorial .ae-preferences{display:grid;gap:4px}
 #allembra-editorial .ae-preferences h3{font-size:27px;margin-bottom:4px}
@@ -288,8 +280,6 @@ html,body{margin:0;min-height:100%;background:#005a85}
 #allembra-editorial .ae-vault::backdrop{background:#092638b8}
 #allembra-editorial .ae-locked > :is(.ae-bar,.ae-stage,.ae-nav){visibility:hidden}
 #allembra-editorial .ae-vault-brand{display:flex;align-items:center;gap:10px;font:600 26px Newsreader,Georgia,serif}
-#allembra-editorial .ae-vault-brand .ae-mark b{background:#082b3b}
-#allembra-editorial .ae-vault-brand .ae-mark i{background:#005a85}
 #allembra-editorial .ae-vault-entry[open]{animation:ae-gate-enter 420ms cubic-bezier(.22,1,.36,1) both}
 #allembra-editorial .ae-vault-entry[open] .ae-vault-brand{animation:ae-gate-enter 460ms 70ms cubic-bezier(.22,1,.36,1) both}
 #allembra-editorial .ae-revealed > :is(.ae-bar,.ae-stage,.ae-nav){animation:ae-main-enter 480ms cubic-bezier(.22,1,.36,1) backwards}
@@ -317,9 +307,6 @@ html,body{margin:0;min-height:100%;background:#005a85}
 #allembra-editorial .ae-day-detail h3{font-size:clamp(14px,5.25vw,25px);white-space:nowrap;letter-spacing:-.045em}
 #allembra-editorial .ae-notice{--paper:#fff9e9;background:#005a85;color:var(--paper);border-radius:19px}
 #allembra-editorial .ae-notice-content{color:inherit}
-#allembra-editorial .ae-notice-content .ae-mark b{background:#fff4de}
-#allembra-editorial .ae-notice-content .ae-mark i{background:#7bcedd}
-#allembra-editorial .ae-notice-content .ae-mark em{background:#ffc453}
 #allembra-editorial .ae-notice h2{border:0;padding-top:2px}
 #allembra-editorial .ae-notice .ae-actions .ae-primary{background:#ffbb23;color:#18242a;text-decoration:none}
 #allembra-editorial .ae-notice .ae-actions button{color:inherit}
@@ -335,13 +322,14 @@ html,body{width:100%;max-width:100%;overflow-x:hidden}
 #allembra-editorial .ae-save-menu video,#allembra-editorial .ae-save-menu audio,#allembra-editorial .ae-save-menu img{width:100%;min-width:0;max-height:190px}
 #allembra-editorial .ae-save-options button{min-width:0;padding:7px 4px}
 #allembra-editorial .ae-share-format{width:min(calc(100% - 24px),360px);box-sizing:border-box;padding:17px;border:0;border-radius:16px;background:#fff9e9;color:#092d3c}
+#allembra-editorial .ae-leave-record .ae-actions{display:flex;flex-wrap:wrap;gap:8px}
 #allembra-editorial .ae-share-format .ae-actions{margin:14px 0 5px}
 #allembra-editorial .ae-letter{grid-template-rows:auto auto 1fr auto}
 #allembra-editorial .ae-letter-signature{text-align:right;align-self:end;font:600 19px Newsreader,Georgia,serif}
 #allembra-editorial .ae-eye{justify-self:end;text-decoration:underline;text-underline-offset:3px}
 #allembra-editorial .ae-security input[type=email]{width:100%;min-height:44px;padding:7px}
 #allembra-editorial .ae-bar .ae-brand{display:flex;align-items:center;gap:8px;padding:0;font:600 23px Newsreader,Georgia,serif}
-#allembra-editorial .ae-phone[data-scene=relic]{--scene:#075878}
+#allembra-editorial .ae-phone[data-scene=relic]{--scene:#48245f;--paper:#fff4de;--line:#e8cdea80}
 #allembra-editorial .ae-relic-heading{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:9px}
 #allembra-editorial .ae-relic-toggle{display:flex;align-items:center;gap:4px}
 #allembra-editorial .ae-relic-toggle button[aria-pressed=true]{background:#ffbb23;color:#18242a}
@@ -710,8 +698,44 @@ html,body{width:100%;max-width:100%;overflow-x:hidden}
     }
     showIcons();
   }
-  async function go(destination, flip=true) {
+  function confirmLeavingRecord(destination, flip) {
+    if(q('.ae-leave-record[open]'))return;
+    const content=selectedContent();
+    const message=content
+      ? 'Salve o registro antes de trocar de tela. Se sair sem salvar, ele será descartado.'
+      : 'Para guardar a gravação, volte e finalize antes de sair.';
+    const dialog=document.createElement('dialog');
+    dialog.className='ae-share-format ae-leave-record';
+    dialog.setAttribute('aria-labelledby','ae-leave-record-title');
+    dialog.innerHTML=`<h3 id="ae-leave-record-title">Registro em andamento</h3><p>${message}</p>
+      <div class="ae-actions"><button type="button" autofocus>Continuar editando</button>
+      <button type="button">Sair sem salvar</button>
+      ${content?'<button type="button" class="ae-primary">Salvar e sair</button>':''}</div>`;
+    phone.append(dialog);
+    const [stay, discard, save]=dialog.querySelectorAll('button');
+    dialog.addEventListener('close',()=>dialog.remove(),{once:true});
+    stay.onclick=()=>dialog.close();
+    discard.onclick=()=>{
+      dialog.close();
+      state.text[state.kind]='';
+      state.media=false;
+      go(destination,flip,true);
+    };
+    if(save)save.onclick=()=>{
+      dialog.close();
+      addDraft(false,destination,flip);
+    };
+    dialog.showModal();
+  }
+  async function go(destination, flip=true, discardConfirmed=false) {
     if(moving||destination===state.page&&arguments.length===1) return;
+    if(state.page==='capture'&&destination!=='capture'&&!discardConfirmed){
+      if(savingRecord)return;
+      if(selectedContent()||audioActive||audioSettling||cameraSaving||cameraRecorder?.state==='recording'){
+        confirmLeavingRecord(destination,flip);
+        return;
+      }
+    }
     moving=true;
     try {
       if(state.page==='capture' && state.kind===3) stopAudio(true);
@@ -1116,7 +1140,7 @@ html,body{width:100%;max-width:100%;overflow-x:hidden}
       {opacity:1,transform:'scale(1.035,.86)',borderRadius:'25px',offset:.68},
       {transform:'none',borderRadius:'18px'}],{duration:370,easing:'cubic-bezier(.23,.62,.3,1)'});
   }
-  async function addDraft(closed) {
+  async function addDraft(closed,destination='home',flip=true) {
     const content=selectedContent();
     if(!content||savingRecord)return;
     savingRecord=true;
@@ -1130,7 +1154,7 @@ html,body{width:100%;max-width:100%;overflow-x:hidden}
     state.text[state.kind]='';state.media=false;
     playEffect(closed?'lock':'paper');
     savingRecord=false;
-    go('home',true);
+    go(destination,flip,true);
   }
   function updateOpeningOptions(){
     const container=q('.ae-opening-items');
@@ -1445,6 +1469,7 @@ html,body{width:100%;max-width:100%;overflow-x:hidden}
     });
   }
   window.allembraBack=()=>{
+    const leave=q('.ae-leave-record[open]');if(leave){leave.close();return true;}
     if(shareFormat.open){shareFormat.close();return true;}
     const review=q('.ae-save-menu[open]');if(review){review.close();return true;}
     if(calendar.open){calendar.close();return true;}

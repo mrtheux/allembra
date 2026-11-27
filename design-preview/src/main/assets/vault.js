@@ -99,7 +99,7 @@
     const hasBio=mode==='unlock'&&bridge.biometricEnabled?.();
     const keyFile=mode==='key';
     dialog.innerHTML=`<form>
-      ${!key?'<div class="ae-vault-brand" aria-hidden="true"><span class="ae-mark"><b></b><i></i><em></em></span>Allembra</div>':''}
+      ${!key?'<div class="ae-vault-brand" aria-hidden="true">'+document.querySelector('.ae-brand .ae-mark').outerHTML+'Allembra</div>':''}
       <h2>${settingUp?'Sua chave de memória':mode==='restore'?'Recuperar backup':keyFile?'Recuperar sua frase':'Desbloquear Allembra'}</h2>
       <p>${settingUp?'Crie uma frase de pelo menos 16 caracteres. Guarde-a no gerenciador de senhas ou em lugar seguro. Ela é necessária para recuperar o seu backup.':mode==='restore'?'Use a frase que protegeu este arquivo. Recuperar substitui o Relicário atual.':keyFile?'Use a senha de emergência com que você cifrou este arquivo.':'Use a frase escolhida no primeiro acesso.'}</p>
       <input type="text" name="user" value="Allembra" autocomplete="username" readonly hidden>
