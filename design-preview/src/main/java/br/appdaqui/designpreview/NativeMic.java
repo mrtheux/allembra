@@ -25,15 +25,25 @@ final class NativeMic {
 
     synchronized void start(Runnable onLimit) throws IOException {
         discard();
+        try {
+            startRecorder(onLimit, true);
+        } catch (IOException | RuntimeException unsupportedProfile) {
+            startRecorder(onLimit, false);
+        }
+    }
+
+    private void startRecorder(Runnable onLimit, boolean explicitProfile) throws IOException {
         MediaRecorder next = Build.VERSION.SDK_INT >= 31 ? new MediaRecorder(context) : new MediaRecorder();
         try {
             next.setAudioSource(MediaRecorder.AudioSource.MIC);
             next.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
             next.setAudioEncoder(MediaRecorder.AudioEncoder.AAC);
-            next.setAudioEncodingBitRate(96000);
-            next.setAudioSamplingRate(44100);
+            if (explicitProfile) {
+                next.setAudioEncodingBitRate(96000);
+                next.setAudioSamplingRate(44100);
+            }
             next.setOutputFile(recording.getAbsolutePath());
-            next.setMaxDuration(60000);
+            next.setMaxDuration(30000);
             next.setMaxFileSize(MAX_BYTES);
             next.setOnInfoListener((sender, what, extra) -> {
                 synchronized (this) {

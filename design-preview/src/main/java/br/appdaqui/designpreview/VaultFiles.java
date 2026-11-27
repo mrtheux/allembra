@@ -13,7 +13,7 @@ import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 
 final class VaultFiles {
-    static final int MAX_BYTES = 32 * 1024 * 1024;
+    static final int MAX_BYTES = 96 * 1024 * 1024;
     private static final Object LOCK = new Object();
     private final AtomicFile file;
     private final Context context;

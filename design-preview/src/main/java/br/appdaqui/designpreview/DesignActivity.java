@@ -47,7 +47,7 @@ public final class DesignActivity extends Activity {
     private static final String HOST = "allembra-preview.invalid";
     private static final String HOME = "https://" + HOST + "/index.html";
     private static final int MEDIA_PERMISSION = 31, MIC_PERMISSION = 33, CAMERA_PERMISSION = 34;
-    private static final int TAKE_PHOTO = 51, TAKE_VIDEO = 52, MEDIA_LIMIT = 15 * 1024 * 1024;
+    private static final int TAKE_PHOTO = 51, TAKE_VIDEO = 52, MEDIA_LIMIT = 48 * 1024 * 1024, VIDEO_SECONDS = 15;
     private static final int NOTIFICATION_PERMISSION = 32, SAVE_DOCUMENT = 41, OPEN_DOCUMENT = 42;
     private FrameLayout container;
     private VaultFiles vault;
@@ -62,6 +62,7 @@ public final class DesignActivity extends Activity {
     private volatile boolean documentOpen;
     private ValueAnimator surfaceAnimation;
     private int currentSurface = BLUE;
+    private boolean modalDimmed;
     private static final int BLUE = 0xFF005A85;
     private WebView web;
     private PermissionRequest pending;
@@ -250,8 +251,8 @@ public final class DesignActivity extends Activity {
                 .putExtra(MediaStore.EXTRA_OUTPUT, target)
                 .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
             capture.setClipData(ClipData.newUri(getContentResolver(), file.getName(), target));
-            if (code == TAKE_VIDEO) capture.putExtra(MediaStore.EXTRA_DURATION_LIMIT, 30)
-                .putExtra(MediaStore.EXTRA_VIDEO_QUALITY, 1).putExtra(MediaStore.EXTRA_SIZE_LIMIT, (long) MEDIA_LIMIT);
+            if (code == TAKE_VIDEO) capture.putExtra(MediaStore.EXTRA_DURATION_LIMIT, VIDEO_SECONDS)
+                .putExtra(MediaStore.EXTRA_VIDEO_QUALITY, 1);
             cameraOutput = file;
             cameraRequest = code;
             startActivityForResult(capture, code);
@@ -287,7 +288,7 @@ public final class DesignActivity extends Activity {
                     try {
                         metadata.setDataSource(this, source);
                         long duration = Long.parseLong(metadata.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION));
-                        if (duration > 30500) throw new IOException("O vídeo excede 30 segundos. Grave um trecho mais curto.");
+                        if (duration > VIDEO_SECONDS * 1000L + 500) throw new IOException("O vídeo excede 15 segundos. Grave um trecho mais curto.");
                     } finally { metadata.release(); }
                 }
                 String encoded;
@@ -297,7 +298,7 @@ public final class DesignActivity extends Activity {
                     byte[] buffer = new byte[8192];
                     for (int count; (count = input.read(buffer)) != -1;) {
                         if (bytes.size() > MEDIA_LIMIT - count)
-                            throw new IOException("A captura excede 15 MB. Tente um vídeo mais curto.");
+                            throw new IOException("Esta câmera gerou um arquivo grande demais para o aparelho importar. Tente uma resolução menor.");
                         bytes.write(buffer, 0, count);
                     }
                     if (bytes.size() == 0) throw new IOException("A captura ficou vazia.");
@@ -311,6 +312,20 @@ public final class DesignActivity extends Activity {
                 callWeb("allembraCameraFailed", message);
             } finally { file.delete(); }
         }, "allembra-camera").start();
+    }
+
+    private void paintInsets() {
+        int color = currentSurface;
+        if (modalDimmed) {
+            float backdrop = 184f / 255f;
+            color = Color.rgb(
+                Math.round(Color.red(color) * (1 - backdrop) + 8 * backdrop),
+                Math.round(Color.green(color) * (1 - backdrop) + 22 * backdrop),
+                Math.round(Color.blue(color) * (1 - backdrop) + 32 * backdrop));
+        }
+        container.setBackgroundColor(color);
+        getWindow().setStatusBarColor(color);
+        getWindow().setNavigationBarColor(color);
     }
 
     private final class VaultBridge {
@@ -438,6 +453,13 @@ public final class DesignActivity extends Activity {
         @JavascriptInterface public int micLevel() { return microphone.level(); }
         @JavascriptInterface public String micTake() { return microphone.take(); }
 
+        @JavascriptInterface public void modalDim(boolean dimmed) {
+            runOnUiThread(() -> {
+                modalDimmed = dimmed;
+                paintInsets();
+            });
+        }
+
         @JavascriptInterface public void surface(String css) {
             if (css == null || !css.matches("#[a-fA-F0-9]{6}")) return;
             int color = Color.parseColor(css);
@@ -448,10 +470,8 @@ public final class DesignActivity extends Activity {
                 surfaceAnimation.setDuration(320);
                 surfaceAnimation.addUpdateListener(animation -> {
                     currentSurface = (int) animation.getAnimatedValue();
-                    container.setBackgroundColor(currentSurface);
+                    paintInsets();
                     web.setBackgroundColor(currentSurface);
-                    getWindow().setStatusBarColor(currentSurface);
-                    getWindow().setNavigationBarColor(currentSurface);
                 });
                 surfaceAnimation.start();
             });

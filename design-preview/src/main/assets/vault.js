@@ -2,7 +2,7 @@
   if (!globalThis.AllembraNative) return;
   const bridge = globalThis.AllembraNative;
   const encoder = new TextEncoder(), decoder = new TextDecoder('utf-8', {fatal:true});
-  const rounds = 600000, maxBackup = 32 * 1024 * 1024;
+  const rounds = 600000, maxBackup = 96 * 1024 * 1024;
   const dayPattern = /^\d{4}-\d{2}-\d{2}$/;
   const formats = /^(image\/(jpeg|png|webp)|(?:audio|video)\/(?:webm|mp4|ogg|aac|3gpp))(?:;[^\r\n]{0,64})?$/i;
   let key, salt, current, hooks, lockedEnvelope, busy = false, pending = Promise.resolve();
@@ -67,7 +67,6 @@
   }
   async function itemFile(item) {
     if(!(item.content instanceof Blob)) return {...item};
-    if(item.content.size>15*1024*1024) throw new Error('O registro excede 15 MB.');
     return {...item,content:{type:item.content.type,bytes:encode(new Uint8Array(await item.content.arrayBuffer()))}};
   }
   async function write(state) {
@@ -80,7 +79,7 @@
     const iv=crypto.getRandomValues(new Uint8Array(12));
     const payload=await crypto.subtle.encrypt(descriptor(iv),key,encoder.encode(JSON.stringify(data)));
     const record=JSON.stringify({version:1,rounds,salt:encode(salt),iv:encode(iv),payload:encode(new Uint8Array(payload))});
-    if(record.length>maxBackup)throw new Error('O cofre desta versão atingiu 32 MB.');
+    if(record.length>maxBackup)throw new Error('O cofre desta versão atingiu 96 MB.');
     if(!bridge.writeVault(record))throw new Error('Não foi possível gravar o cofre local.');
   }
   function save(state){
@@ -102,13 +101,13 @@
       ${!key?'<div class="ae-vault-brand" aria-hidden="true">'+document.querySelector('.ae-brand .ae-mark').outerHTML+'Allembra</div>':''}
       <h2>${settingUp?'Sua chave de memória':mode==='restore'?'Recuperar backup':keyFile?'Recuperar sua frase':'Desbloquear Allembra'}</h2>
       <p>${settingUp?'Crie uma frase de pelo menos 16 caracteres. Guarde-a no gerenciador de senhas ou em lugar seguro. Ela é necessária para recuperar o seu backup.':mode==='restore'?'Use a frase que protegeu este arquivo. Recuperar substitui o Relicário atual.':keyFile?'Use a senha de emergência com que você cifrou este arquivo.':'Use a frase escolhida no primeiro acesso.'}</p>
+      ${hasBio?'<button class="ae-primary" type="button" data-gate-bio autofocus>Desbloquear com biometria</button>':''}
       <input type="text" name="user" value="Allembra" autocomplete="username" readonly hidden>
       <label>Frase de recuperação<input type="password" name="vault-password" autocomplete="${settingUp?'new-password':'current-password'}" required maxlength="512"></label><button type="button" class="ae-eye" data-eye>Mostrar frase</button>
       ${settingUp?'<label>Repita a frase<input type="password" name="confirmation" autocomplete="new-password" required maxlength="512"></label><label class="ae-first-bio"><span><strong>Ativar biometria</strong><small>Recomendado para desbloquear mais rápido neste aparelho.</small></span><input type="checkbox" name="first-bio"></label>':''}
       ${mode==='restore'?'<label><input type="checkbox" name="replace" required> Confirmo a substituição do Relicário</label>':''}
       <p role="alert"></p>
-      <button class="ae-primary" type="submit">${settingUp?'Criar meu Relicário':mode==='restore'||keyFile?'Recuperar':'Desbloquear'}</button>
-      ${hasBio?'<button type="button" data-gate-bio>Usar biometria</button>':''}
+      <button class="${hasBio?'':'ae-primary'}" type="submit">${settingUp?'Criar meu Relicário':mode==='restore'||keyFile?'Recuperar':'Desbloquear'}</button>
       ${mode==='restore'||keyFile?'<button type="button" data-gate-cancel>Cancelar</button>':'<button type="button" data-gate-restore>Já tenho um backup</button>'}
     </form>`;
     document.querySelector('.ae-phone').append(dialog);
