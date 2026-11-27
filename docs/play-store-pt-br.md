@@ -61,3 +61,19 @@ O PDF *Google Security Overview* de outubro de 2026 é referência para defesa e
 ### Assinatura no Google Play
 
 O certificado público da assinatura do app e o da chave de upload têm funções diferentes. O Play App Signing usa a chave de assinatura do app para distribuir atualizações. Para enviar o AAB, assine com a chave de upload registrada para o mesmo ID de pacote. Confirme na seção **Integridade do app** o ID definitivo e as impressões digitais SHA-256 antes do primeiro envio. Guarde a chave privada e a senha em armazenamento seguro, fora do repositório. [Play App Signing](https://support.google.com/googleplay/android-developer/answer/9842756)
+
+### Primeiro AAB do Allembra
+
+- ID definitivo: `br.institutocogita.allembra`.
+- Primeiro envio: `versionCode 1`, `versionName 0.7.0`, API alvo 36. O build mantém o ícone Vermelho laca da versão de teste.
+- Em **Actions → AAB sem assinatura para teste interno**, baixe o artefato **Allembra-AAB-sem-assinatura** de uma execução bem-sucedida e extraia o ZIP.
+- No PowerShell, na pasta extraída, assine com sua chave de upload. Ajuste o caminho do arquivo JKS para o local onde você guardou a chave.
+
+```powershell
+jarsigner -keystore "C:\caminho\allembra-upload.jks" -signedjar .\Allembra-upload.aab .\Allembra-sem-assinatura.aab allembra-upload
+jarsigner -verify .\Allembra-upload.aab
+```
+
+Depois, crie ou abra o Allembra na **Play Console → Teste interno**, configure o Play App Signing e envie **Allembra-upload.aab**. Se a Console já tiver uma chave de upload cadastrada, a assinatura do arquivo deve corresponder ao certificado de upload exibido em **Integridade do app**. O JKS e a senha ficam com quem assina.
+
+Para compilar localmente, use `BUNDLETOOL_JAR` com `./build-apk.sh --play-store`. O arquivo sem assinatura sai em `build/play-store/Allembra-sem-assinatura.aab`.

@@ -1,0 +1,62 @@
+name: AAB sem assinatura para teste interno
+
+on:
+  push:
+    tags: ['store-*']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  bundle:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - name: Preparar SDK e bundletool
+        run: |
+          mkdir -p "$RUNNER_TEMP/allembra-sdk"
+          cd "$RUNNER_TEMP/allembra-sdk"
+          curl -fsSL --retry 3 https://dl.google.com/android/repository/platform-36_r02.zip -o platform.zip
+          curl -fsSL --retry 3 https://dl.google.com/android/repository/build-tools_r35_linux.zip -o build-tools.zip
+          curl -fsSL --retry 3 https://github.com/google/bundletool/releases/download/1.18.2/bundletool-all-1.18.2.jar -o bundletool.jar
+          sha256sum --check <<'CHECKSUMS'
+          37607369a28c5b640b3a7998868d45898ebcb777565a0e85f9acf36f29631d2e  platform.zip
+          bd3a4966912eb8b30ed0d00b0cda6b6543b949d5ffe00bea54c04c81e1561d88  build-tools.zip
+          378b5434cd1378bef6b2bc527b8c7f0ff2584b273830335bce54d6d0813c8584  bundletool.jar
+          CHECKSUMS
+          unzip -q platform.zip -d platform
+          unzip -q build-tools.zip -d build-tools
+          echo "DAQUI_PLATFORM=$PWD/platform/android-36/android.jar" >> "$GITHUB_ENV"
+          echo "DAQUI_BUILD_TOOLS=$PWD/build-tools/android-15" >> "$GITHUB_ENV"
+          echo "BUNDLETOOL_JAR=$PWD/bundletool.jar" >> "$GITHUB_ENV"
+      - name: Gerar e conferir AAB
+        run: |
+          ./build-apk.sh --play-store
+          bundle=build/play-store/Allembra-sem-assinatura.aab
+          java -jar "$BUNDLETOOL_JAR" dump manifest --bundle="$bundle" > "$RUNNER_TEMP/allembra-manifest.xml"
+          python3 - "$RUNNER_TEMP/allembra-manifest.xml" <<'PY'
+          import sys
+          from xml.etree import ElementTree
+          android = '{http://schemas.android.com/apk/res/android}'
+          root = ElementTree.parse(sys.argv[1]).getroot()
+          package = 'br.institutocogita.allembra'
+          assert root.get('package') == package
+          assert root.find('uses-sdk').get(android + 'targetSdkVersion') == '36'
+          assert root.find('application').get(android + 'label') == 'Allembra'
+          assert root.find('application/provider').get(android + 'authorities') == package + '.share'
+          PY
+          (cd build/play-store && sha256sum Allembra-sem-assinatura.aab > SHA256.txt)
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Allembra-AAB-sem-assinatura
+          path: |
+            build/play-store/Allembra-sem-assinatura.aab
+            build/play-store/SHA256.txt
+          if-no-files-found: error
