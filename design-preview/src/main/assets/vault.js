@@ -93,11 +93,13 @@
     if(dialog){if(dialog.open)dialog.close();dialog.remove();}
     dialog=document.createElement('dialog');
     dialog.className='ae-vault';
+    if(!key)dialog.classList.add('ae-vault-entry');
     dialog.setAttribute('aria-label','Dados criptografados');
     const settingUp=mode==='setup';
     const hasBio=mode==='unlock'&&bridge.biometricEnabled?.();
     const keyFile=mode==='key';
     dialog.innerHTML=`<form>
+      ${!key?'<div class="ae-vault-brand" aria-hidden="true"><span class="ae-mark"><b></b><i></i><em></em></span>Allembra</div>':''}
       <h2>${settingUp?'Sua chave de memória':mode==='restore'?'Recuperar backup':keyFile?'Recuperar sua frase':'Desbloquear Allembra'}</h2>
       <p>${settingUp?'Crie uma frase de pelo menos 16 caracteres. Guarde-a no gerenciador de senhas ou em lugar seguro. Ela é necessária para recuperar o seu backup.':mode==='restore'?'Use a frase que protegeu este arquivo. Recuperar substitui o Relicário atual.':keyFile?'Use a senha de emergência com que você cifrou este arquivo.':'Use a frase escolhida no primeiro acesso.'}</p>
       <input type="text" name="user" value="Allembra" autocomplete="username" readonly hidden>
@@ -159,6 +161,12 @@
         }
         const enroll=settingUp&&form.elements['first-bio']?.checked;
         form.reset();dialog.close();dialog.remove();hooks.render();
+        const phone=document.querySelector('.ae-phone');
+        if(phone.classList.contains('ae-locked')){
+          phone.classList.replace('ae-locked','ae-revealed');
+          const title=phone.querySelector('.ae-page h2');
+          if(title){title.tabIndex=-1;title.focus({preventScroll:true});}
+        }
         if(enroll)bridge.biometricSave?.(phrase);
         if(mode==='restore')hooks.present('Backup recuperado.');
       } catch {
@@ -249,6 +257,7 @@
   globalThis.AllembraStore={
     start(state,callbacks){
       current=state;hooks=callbacks;
+      document.querySelector('.ae-phone').classList.add('ae-locked');
       lockedEnvelope=bridge.readVault();
       gate(lockedEnvelope?'unlock':'setup',lockedEnvelope);
     },
