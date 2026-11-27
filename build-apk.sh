@@ -24,7 +24,8 @@ bundle_name=Allembra-rascunho.aab
 if [[ "$build_mode" == "--play-store" ]]; then
     build="$PWD/build/play-store"
     package="br.institutocogita.allembra"
-    version_name=0.7.0
+    version_code=2
+    version_name=0.7.1
     bundle_name=Allembra-sem-assinatura.aab
 fi
 platform="${DAQUI_PLATFORM:-$sdk/platforms/android-$target_sdk/android.jar}"

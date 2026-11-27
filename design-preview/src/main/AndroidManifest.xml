@@ -6,7 +6,7 @@
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
     <uses-feature android:name="android.hardware.camera" android:required="false"/>
     <uses-feature android:name="android.hardware.microphone" android:required="false"/>
-    <application android:label="Allembra Teste 0.7" android:icon="@drawable/icon_lacquer"
+    <application android:label="Allembra Teste 0.7" android:icon="@mipmap/ic_launcher" android:roundIcon="@mipmap/ic_launcher"
         android:allowBackup="false" android:usesCleartextTraffic="false"
         android:theme="@android:style/Theme.Material.Light.NoActionBar">
         <activity android:name="br.appdaqui.designpreview.DesignActivity" android:exported="true" android:windowSoftInputMode="adjustResize" android:configChanges="orientation|screenSize|keyboardHidden">
