@@ -351,7 +351,8 @@ html,body{width:100%;max-width:100%;overflow-x:hidden}
 #allembra-editorial .ae-phone[data-scene=audio] .ae-wavebox{position:static;overflow:visible}
 #allembra-editorial .ae-phone[data-scene=audio] .ae-wavebox canvas{top:12%;height:73%;pointer-events:none}
 #allembra-editorial .ae-phone[data-scene=audio] .ae-wavebox[data-mic-side=right] .ae-mic{left:auto;right:14px}
-#allembra-editorial .ae-phone[data-scene=audio] .ae-page{--control-y:48%}
+#allembra-editorial .ae-phone[data-scene=audio] .ae-page{--control-y:48%;touch-action:manipulation}
+#allembra-editorial .ae-wave-effect{align-self:flex-start;text-decoration:underline;text-underline-offset:3px}
 #allembra-editorial .ae-phone[data-scene=audio] .ae-feather{top:var(--control-y);bottom:auto;transform:translateY(-50%)}
 #allembra-editorial .ae-phone[data-scene=audio] .ae-mic{translate:0 -50%}
 #allembra-editorial .ae-save-status:not(:empty){position:fixed;z-index:9;left:50%;bottom:72px;transform:translateX(-50%);background:#fff4de;color:#211724;padding:10px 17px;border-radius:24px;white-space:nowrap}
@@ -621,10 +622,10 @@ html,body{width:100%;max-width:100%;overflow-x:hidden}
       } else {
         page.innerHTML=`<div class="ae-tools">${backButton('back')}</div><h2>${types[kind][0]}</h2>
           ${textType(kind)?'<textarea aria-label="Seu registro" placeholder="Querido eu do futuro…"></textarea>':
-          '<div class="ae-wavebox"><canvas role="img" aria-label="Forma de onda do áudio"></canvas><button type="button" class="ae-mic" data-action="mic" aria-pressed="false" aria-label="Iniciar gravação">'+icons('mic')+'</button></div><p class="ae-audio-label">Toque para gravar</p><button type="button" class="ae-finish-audio" data-action="finish-audio" hidden>Encerrar gravação</button>'}
+          '<div class="ae-wavebox"><canvas role="img" aria-label="Forma de onda do áudio"></canvas><button type="button" class="ae-mic" data-action="mic" aria-pressed="false" aria-label="Iniciar gravação">'+icons('mic')+'</button></div><p class="ae-audio-label">Toque para gravar</p><button type="button" class="ae-wave-effect" data-action="wave-effect"></button><button type="button" class="ae-finish-audio" data-action="finish-audio" hidden>Encerrar gravação</button>'}
           <p class="ae-status" role="status"></p>${feather}`;
         if(textType(kind)) q('textarea').value=state.text[kind];
-        if(kind===3) wave(nowTime(),false);
+        if(kind===3){updateWaveEffect();wave(nowTime(),false);}
       }
     }
     if(state.page==='seal') {
@@ -789,25 +790,119 @@ html,body{width:100%;max-width:100%;overflow-x:hidden}
       const value=Math.max(0,Math.min(1,Number(globalThis.AllembraNative.micLevel())/32768));
       levels.push(Math.sqrt(value));if(levels.length>42)levels.shift();
     }
-    const input=analyser?new Uint8Array(analyser.fftSize):null;
+    const input=running&&analyser?new Uint8Array(analyser.fftSize):null;
     if(input) analyser.getByteTimeDomainData(input);
-    for(let layer=0;layer<4;layer++) {
+    const phase=running&&!reduce()?time/520:0;
+    const strength=x=>{
+      if(input)return Math.min(1,Math.abs(input[Math.round(x*(input.length-1))]-128)/64);
+      if(running&&nativeAudio)return levels[Math.round(x*Math.max(0,levels.length-1))]||0;
+      return running&&simulated ? .35+.25*Math.sin(x*13-phase) : 0;
+    };
+    if(canvas.closest('.ae-wavebox').dataset.micSide==='right'){
+      context.translate(width,0);
+      context.scale(-1,1);
+    }
+    const middle=height*.5;
+    const trace=(color,y)=>{
       context.beginPath();
-      const phase=running&&!reduce()?time/970:0;
-      for(let x=0;x<=width;x+=4) {
-        const fraction=x/width;
-        const envelope=nativeAudio?levels[Math.floor(fraction*Math.max(0,levels.length-1))]||0:0;
-        const signal=nativeAudio?Math.sin(fraction*23+phase*4)*envelope*.6:input?(input[Math.min(input.length-1,Math.floor(fraction*input.length))]-128)/128:
-          running?Math.sin(fraction*18+phase*3)*Math.sin(fraction*Math.PI)**2*.2:0;
-        const y=height*.50+(layer-1.5)*12+Math.sin(fraction*7+layer*.7+phase)*7+signal*height*.45;
-        if(x===0) context.moveTo(x,y); else context.lineTo(x,y);
+      for(let i=0;i<=72;i++){
+        const x=i/72;
+        if(i===0)context.moveTo(0,y(x));else context.lineTo(x*width,y(x));
       }
-      context.strokeStyle=['#1e66852a','#1e66854a','#1e668577','#1e668553'][layer];
-      context.lineWidth=1.4;
+      context.strokeStyle=color;
+      context.lineWidth=1.65;
       context.stroke();
+    };
+    switch(waveEffect){
+      case 0:
+        trace('#082c42',x=>middle+Math.sin(x*30-phase)*(8+strength(x)*height*.34)*Math.sin(x*Math.PI));
+        break;
+      case 1:
+        ['#102c49','#24527a','#632448'].forEach((color,layer)=>{
+          const sway=x=>Math.sin(x*10-phase+layer*.75);
+          trace(color,x=>middle+(layer-1)*16+sway(x)*(9+strength(x)*height*.25));
+        });
+        break;
+      case 2:
+        for(let i=0;i<7;i++){
+          const fraction=i/7;
+          const x=width*(fraction*.85+.05);
+          const spread=height*(.07+fraction*.15+strength(fraction)*.18);
+          context.beginPath();
+          context.moveTo(x,middle-spread);
+          context.quadraticCurveTo(x+width*.22,middle+Math.sin(phase-i)*18,x,middle+spread);
+          context.strokeStyle=i%2?'#235476':'#58264c';
+          context.lineWidth=1.8;
+          context.stroke();
+        }
+        break;
+      case 3: {
+        const columns=22, gap=width/columns;
+        for(let i=0;i<columns;i++){
+          const x=(i+.5)/columns;
+          const rows=1+Math.round((.12*Math.sin(x*Math.PI)+strength(x)*.78)*12);
+          for(let row=-rows;row<=rows;row++){
+            context.fillStyle=Math.abs(row)%2?'#285176':'#502649';
+            const step=Math.min(7,height/30);
+            context.fillRect(i*gap,middle+row*step,gap*.72,step*.57);
+          }
+        }
+        break;
+      }
+      case 4:
+        for(let layer=0;layer<9;layer++){
+          trace(layer%3===0?'#59274e':'#174761',x=>{
+            const ridge=Math.sin(x*9+layer*.17-phase)*Math.sin(x*Math.PI);
+            return middle+(layer-4)*height*.039+ridge*(14+strength(x)*height*.23);
+          });
+        }
+        break;
     }
     if(running && audioActive && !audioPaused && !reduce()) drawId=requestAnimationFrame(next=>wave(next,true));
   }
+  const waveEffects=['Linha editorial','Marés em camadas','Ondas de eco','Equalizador de papel','Horizonte em relevo'];
+  let waveEffect=1;
+  function updateWaveEffect(){
+    const name=waveEffects[waveEffect];
+    const choice=q('.ae-wave-effect');
+    choice.textContent=name;
+    choice.setAttribute('aria-label','Trocar efeito de onda. Atual: '+name);
+    q('.ae-wavebox canvas').setAttribute('aria-label','Forma de onda: '+name);
+  }
+  function nextWaveEffect(){
+    waveEffect=(waveEffect+1)%waveEffects.length;
+    updateWaveEffect();
+    cancelAnimationFrame(drawId);
+    wave(nowTime(),audioActive&&!audioPaused);
+  }
+  let waveTouch, previousWaveTap;
+  page.addEventListener('pointerdown',event=>{
+    if(phone.dataset.scene!=='audio'||!event.isPrimary||event.button!==0||
+      event.pointerType==='mouse'||event.target.closest('button'))return;
+    const bounds=page.getBoundingClientRect();
+    if(Math.abs(event.clientX-bounds.left-bounds.width/2)>bounds.width*.29||
+      Math.abs(event.clientY-bounds.top-bounds.height/2)>bounds.height*.27)return;
+    waveTouch={id:event.pointerId,x:event.clientX,y:event.clientY,time:performance.now()};
+  });
+  page.addEventListener('pointercancel',()=>{waveTouch=previousWaveTap=null;});
+  page.addEventListener('pointerup',event=>{
+    if(waveTouch?.id!==event.pointerId)return;
+    const tap=waveTouch;waveTouch=null;
+    const now=performance.now();
+    if(phone.dataset.scene!=='audio'||now-tap.time>260||
+      Math.hypot(event.clientX-tap.x,event.clientY-tap.y)>18){previousWaveTap=null;return;}
+    if(previousWaveTap&&now-previousWaveTap.time<350&&
+      Math.hypot(tap.x-previousWaveTap.x,tap.y-previousWaveTap.y)<32){
+      previousWaveTap=null;nextWaveEffect();
+    }else previousWaveTap={...tap,time:now};
+  });
+  page.addEventListener('dblclick',event=>{
+    if(phone.dataset.scene!=='audio'||event.target.closest('button')||
+      (event.pointerType&&event.pointerType!=='mouse')||event.sourceCapabilities?.firesTouchEvents)return;
+    const bounds=page.getBoundingClientRect();
+    if(Math.abs(event.clientX-bounds.left-bounds.width/2)<=bounds.width*.29&&
+      Math.abs(event.clientY-bounds.top-bounds.height/2)<=bounds.height*.27)nextWaveEffect();
+  });
   let keepAudio=false,audioReviewWaiting=false,audioSettling=false,nativeAudio=false;
   let levels=[],lastLevelAt=0,audioPaused=false,micGesture,micHeld=false;
   function markMic(status){
@@ -1274,6 +1369,7 @@ html,body{width:100%;max-width:100%;overflow-x:hidden}
       case 'print-post':shareFormat.close();shareLetter(true,false);break;
       case 'print-story':shareFormat.close();shareLetter(true,true);break;
       case 'print-close':shareFormat.close();break;
+      case 'wave-effect':nextWaveEffect();break;
       case 'mic':
         if(micHeld){micHeld=false;break;}
         if(audioSettling)break;
